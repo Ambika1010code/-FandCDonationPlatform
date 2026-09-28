@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+{% block title %}Recipient Dashboard | F&C{% endblock %}
+{% block content %}
+<section class="dashboard-page">
+<div class="container py-5">
+    <div class="dashboard-head">
+        <div><div class="eyebrow">RECIPIENT DASHBOARD</div><h1>Welcome, {{ current_user }}</h1><p>Submit support requests and track the review status.</p></div>
+        <div class="d-flex gap-2"><a href="{{ url_for('request_food') }}" class="btn btn-primary">+ Request Food</a><a href="{{ url_for('profile') }}" class="btn btn-outline-primary">My Profile</a></div>
+    </div>
+
+    <div class="row g-4 mb-4">
+        <div class="col-md-4"><div class="dash-stat"><span>🙏</span><strong>{{ total }}</strong><small>Total Requests</small></div></div>
+        <div class="col-md-4"><div class="dash-stat"><span>⏳</span><strong>{{ pending }}</strong><small>Pending Review</small></div></div>
+        <div class="col-md-4"><div class="dash-stat"><span>✅</span><strong>{{ approved }}</strong><small>Approved</small></div></div>
+    </div>
+
+    <div class="row g-4 mb-4">
+        <div class="col-md-6"><a class="dash-action" href="{{ url_for('request_food') }}">🙏 <b>Request Food</b><small>Ask for meals, groceries or other food support.</small></a></div>
+        <div class="col-md-6"><a class="dash-action" href="{{ url_for('request_clothes') }}">👕 <b>Request Clothes</b><small>Request clothing for yourself or your family.</small></a></div>
+    </div>
+
+    <div class="form-card">
+        <div class="d-flex justify-content-between align-items-center mb-3"><h3 class="mb-0">Recent Requests</h3><a href="{{ url_for('history') }}">View full history</a></div>
+        <div class="table-responsive">
+            <table class="table">
+                <thead><tr><th>Item</th><th>Type</th><th>Quantity</th><th>Status</th><th>Date</th></tr></thead>
+                <tbody>
+                {% for row in recent %}
+                    <tr><td>{{ row.item_name }}</td><td>{{ row.request_type }}</td><td>{{ row.quantity }}</td><td><span class="status {{ row.status }}">{{ row.status }}</span></td><td>{{ row.created_at.strftime('%Y-%m-%d') }}</td></tr>
+                {% else %}
+                    <tr><td colspan="5" class="text-center py-4">No requests yet. Start with the buttons above.</td></tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+</section>
+{% endblock %}

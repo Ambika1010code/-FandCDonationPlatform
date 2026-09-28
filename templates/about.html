@@ -1,0 +1,42 @@
+{% extends 'base.html' %}
+{% block title %}About F&C | Food & Clothes Donation Platform{% endblock %}
+{% block content %}
+<section class="blue-hero">
+    <div class="eyebrow" style="color:#eaffff">ABOUT OUR PROJECT</div>
+    <h1>About F&C Platform</h1>
+    <p>A simple student-built web platform for managing food and clothing donations, support requests and community records.</p>
+</section>
+
+<section class="about-purpose container-fluid px-4 px-lg-5">
+    <div class="row align-items-center g-5">
+        <div class="col-lg-5">
+            <div class="eyebrow">OUR PURPOSE</div>
+            <h2>Technology for Practical Giving</h2>
+            <p>F&C (Food & Clothes) connects people who have useful food or clothing with people who need support. The project demonstrates a complete web application using Flask, MySQL, HTML, CSS and JavaScript.</p>
+            <p>Users can create accounts, submit donations or requests, update their profiles and see their own records. An admin account can review and update statuses.</p>
+        </div>
+        <div class="col-lg-7"><img class="about-image" src="{{ url_for('static', filename='images/about-donation.jpg') }}" alt="People handling donations"></div>
+    </div>
+</section>
+
+<section class="stats-about">
+    <div><strong>Flask</strong><span>Python web framework</span></div>
+    <div><strong>MySQL</strong><span>Database storage</span></div>
+    <div><strong>Bootstrap</strong><span>Responsive interface</span></div>
+</section>
+
+<section class="values-section light-section">
+    <div class="section-heading"><div class="eyebrow">PROJECT VALUES</div><h2>What This Website Demonstrates</h2></div>
+    <div class="row g-4 px-3 px-lg-4">
+        <div class="col-lg-4"><div class="value-card"><div class="value-icon">🔐</div><h4>Account Security</h4><p>Passwords are stored using Werkzeug password hashing instead of plain text.</p></div></div>
+        <div class="col-lg-4"><div class="value-card"><div class="value-icon">🗃️</div><h4>Database Records</h4><p>Users, donations, requests and contact messages are stored in MySQL tables.</p></div></div>
+        <div class="col-lg-4"><div class="value-card"><div class="value-icon">📱</div><h4>Responsive Design</h4><p>The layout adapts to desktop, tablet and mobile screens with Bootstrap and CSS.</p></div></div>
+    </div>
+</section>
+
+<section class="join-section">
+    <h2>Ready to Try the Platform?</h2>
+    <p>Create a demo account and explore the donor, recipient and admin workflows.</p>
+    <a href="{{ url_for('register') }}" class="btn btn-green">Create an Account</a>
+</section>
+{% endblock %}

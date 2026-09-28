@@ -1,0 +1,82 @@
+{% extends 'base.html' %}
+{% set is_clothes = donation_type == 'Clothes' %}
+{% block title %}Donate {{ donation_type }} | F&C{% endblock %}
+{% block content %}
+<section class="action-hero {{ 'green-gradient' if not is_clothes else 'blue-gradient' }}">
+    <div class="action-icon">{{ '👗' if is_clothes else '🍱' }}</div>
+    <h1>Donate {{ donation_type }}</h1>
+    <p>{{ 'Give clean, useful clothes a second life. Add the details and the admin can review your donation.' if is_clothes else 'Have extra food? Add the details below so it can reach someone who needs it.' }}</p>
+</section>
+
+<section class="form-area">
+    <div class="form-card wide-form">
+        <div class="d-flex justify-content-between align-items-center mb-4 gap-3">
+            <div><div class="eyebrow">NEW DONATION</div><h2 class="mb-0">{{ donation_type }} Donation Details</h2></div>
+            <span class="tag tag-blue">Logged in as donor</span>
+        </div>
+
+        <form method="POST">
+            <div class="row g-3">
+                <div class="col-md-6">
+                    <label>Your Name</label>
+                    <input class="form-control" value="{{ current_user or '' }}" disabled>
+                </div>
+                <div class="col-md-6">
+                    <label>Phone Number</label>
+                    <input name="phone" class="form-control" placeholder="+977 98XXXXXXXX">
+                </div>
+                <div class="col-12">
+                    <label>Pickup Address</label>
+                    <input name="pickup_location" class="form-control" placeholder="Bharatpur, Chitwan" required>
+                </div>
+                <div class="col-md-6">
+                    <label>{{ 'Clothes Type' if is_clothes else 'Food Type' }}</label>
+                    <select name="item_name" class="form-select" required>
+                        <option value="">Select type</option>
+                        {% if is_clothes %}
+                            <option>T-Shirts</option><option>Jackets</option><option>Children's Wear</option><option>Winter Clothes</option><option>Mixed Clothes</option>
+                        {% else %}
+                            <option>Cooked Meals</option><option>Groceries</option><option>Packaged Food</option><option>Fruits & Vegetables</option><option>Rice</option>
+                        {% endif %}
+                    </select>
+                </div>
+                <div class="col-md-6">
+                    <label>{{ 'Number of Items' if is_clothes else 'Quantity (servings / kg)' }}</label>
+                    <input type="number" min="1" name="quantity" class="form-control" placeholder="10" required>
+                </div>
+                {% if is_clothes %}
+                <div class="col-md-6">
+                    <label>Size</label>
+                    <select name="size" class="form-select" required>
+                        <option value="">Select size</option><option>Small</option><option>Medium</option><option>Large</option><option>XL</option><option>Mixed</option>
+                    </select>
+                </div>
+                {% endif %}
+                <div class="col-md-6">
+                    <label>Condition</label>
+                    <div class="condition-buttons">
+                        <label><input type="radio" name="condition" value="Fresh" required> Fresh</label>
+                        <label><input type="radio" name="condition" value="Good"> Good</label>
+                        <label><input type="radio" name="condition" value="Packaged"> Packaged</label>
+                    </div>
+                </div>
+                {% if not is_clothes %}
+                <div class="col-md-6">
+                    <label>Available Date & Time</label>
+                    <input type="datetime-local" name="available_date" class="form-control">
+                </div>
+                {% endif %}
+                <div class="col-12">
+                    <label>Additional Notes</label>
+                    <textarea name="description" class="form-control" rows="4" placeholder="Special instructions, food information, pickup timing, etc."></textarea>
+                </div>
+                <div class="col-12">
+                    <button class="btn {{ 'btn-green' if not is_clothes else 'btn-primary' }} w-100 form-button">
+                        Submit {{ donation_type }} Donation
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
+</section>
+{% endblock %}

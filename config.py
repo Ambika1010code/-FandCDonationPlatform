@@ -1,0 +1,5 @@
+DB_HOST = 'localhost'
+DB_USER = 'root'
+DB_PASSWORD = ''
+DB_NAME = 'fc_donation'
+SECRET_KEY = 'change-this-secret-key-for-your-local-project'

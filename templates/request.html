@@ -1,0 +1,88 @@
+{% extends 'base.html' %}
+{% set is_clothes = request_type == 'Clothes' %}
+{% block title %}Request {{ request_type }} | F&C{% endblock %}
+{% block content %}
+<section class="action-hero {{ 'orange-gradient' if not is_clothes else 'purple-gradient' }}">
+    <div class="action-icon">{{ '👕' if is_clothes else '🙏' }}</div>
+    <h1>Request {{ request_type }}</h1>
+    <p>{{ 'Tell us what clothing you need. Your request will be visible to the admin for review.' if is_clothes else 'Tell us what food support you need. Your request will be stored and reviewed by the admin.' }}</p>
+</section>
+
+<section class="form-area">
+    <div class="form-card wide-form">
+        <div class="d-flex justify-content-between align-items-center mb-4 gap-3">
+            <div><div class="eyebrow">NEW REQUEST</div><h2 class="mb-0">{{ request_type }} Request Form</h2></div>
+            <span class="tag tag-blue">Logged in as recipient</span>
+        </div>
+
+        <form method="POST">
+            <div class="row g-3">
+                <div class="col-md-6">
+                    <label>Full Name</label>
+                    <input class="form-control" value="{{ current_user or '' }}" disabled>
+                </div>
+                <div class="col-md-6">
+                    <label>Phone Number</label>
+                    <input name="phone" class="form-control" placeholder="+977 98XXXXXXXX">
+                </div>
+                <div class="col-12">
+                    <label>Delivery Address</label>
+                    <input name="address" class="form-control" placeholder="Home, shelter or community address" required>
+                </div>
+
+                {% if is_clothes %}
+                <div class="col-md-6">
+                    <label>Clothes Needed</label>
+                    <select name="item_name" class="form-select" required>
+                        <option value="">Select clothing</option><option>Children's Wear</option><option>Winter Clothes</option><option>Daily Wear</option><option>Mixed Clothes</option>
+                    </select>
+                </div>
+                <div class="col-md-6">
+                    <label>Size</label>
+                    <select name="size" class="form-select" required>
+                        <option value="">Select size</option><option>Small</option><option>Medium</option><option>Large</option><option>XL</option><option>Mixed</option>
+                    </select>
+                </div>
+                {% else %}
+                <div class="col-md-6">
+                    <label>Food Needed</label>
+                    <select name="item_name" class="form-select" required>
+                        <option value="">Select food</option><option>Cooked Meals</option><option>Groceries</option><option>Rice</option><option>Packaged Food</option><option>Other Food</option>
+                    </select>
+                </div>
+                <div class="col-md-6">
+                    <label>Number of People</label>
+                    <input type="number" name="people_count" min="1" class="form-control" placeholder="5">
+                </div>
+                {% endif %}
+
+                <div class="col-md-6">
+                    <label>Quantity</label>
+                    <input type="number" name="quantity" min="1" class="form-control" placeholder="10" required>
+                </div>
+
+                {% if not is_clothes %}
+                <div class="col-md-6">
+                    <label>Needed By</label>
+                    <input type="datetime-local" name="needed_by" class="form-control">
+                </div>
+                {% endif %}
+
+                <div class="col-12">
+                    <label>Reason for Request</label>
+                    <input name="reason" class="form-control" placeholder="Family, community or emergency need" required>
+                </div>
+                <div class="col-12">
+                    <label>Description</label>
+                    <textarea name="description" class="form-control" rows="4" placeholder="Any specific needs, restrictions or useful information..."></textarea>
+                </div>
+                <div class="col-12">
+                    <button class="btn request-button {{ 'clothes-request' if is_clothes else 'food-request' }} w-100 form-button">
+                        Submit {{ request_type }} Request
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
+</section>
+{% endblock %}

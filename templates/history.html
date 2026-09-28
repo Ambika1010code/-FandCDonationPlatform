@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+{% block title %}History | F&C{% endblock %}
+{% block content %}
+<section class="dashboard-page">
+<div class="container py-5">
+    <div class="section-heading left"><div class="eyebrow">YOUR RECORDS</div><h2>{{ 'Donation History' if current_role == 'donor' else 'Request History' }}</h2><p class="text-secondary">All records submitted from your account are shown here.</p></div>
+    <div class="form-card">
+        {% if donations %}
+        <h3 class="mb-3">My Donations</h3>
+        <div class="table-responsive"><table class="table">
+            <thead><tr><th>Item</th><th>Type</th><th>Quantity</th><th>Location</th><th>Status</th><th>Date</th></tr></thead>
+            <tbody>{% for row in donations %}
+                <tr><td>{{ row.item_name }}</td><td>{{ row.donation_type }}</td><td>{{ row.quantity }}</td><td>{{ row.pickup_location }}</td><td><span class="status {{ row.status }}">{{ row.status }}</span></td><td>{{ row.created_at.strftime('%Y-%m-%d %H:%M') }}</td></tr>
+            {% endfor %}</tbody>
+        </table></div>
+        {% elif requests_list %}
+        <h3 class="mb-3">My Requests</h3>
+        <div class="table-responsive"><table class="table">
+            <thead><tr><th>Item</th><th>Type</th><th>Quantity</th><th>Address</th><th>Status</th><th>Date</th></tr></thead>
+            <tbody>{% for row in requests_list %}
+                <tr><td>{{ row.item_name }}</td><td>{{ row.request_type }}</td><td>{{ row.quantity }}</td><td>{{ row.address }}</td><td><span class="status {{ row.status }}">{{ row.status }}</span></td><td>{{ row.created_at.strftime('%Y-%m-%d %H:%M') }}</td></tr>
+            {% endfor %}</tbody>
+        </table></div>
+        {% else %}
+        <div class="empty-state"><div>📋</div><h4>No history yet</h4><p>Your submitted donations or requests will appear here.</p></div>
+        {% endif %}
+    </div>
+</div>
+</section>
+{% endblock %}

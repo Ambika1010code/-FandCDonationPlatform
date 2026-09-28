@@ -1,0 +1,49 @@
+{% extends 'base.html' %}
+{% block title %}Login | F&C{% endblock %}
+{% block content %}
+<section class="auth-page">
+    <div class="auth-heading">
+        <span class="auth-logo">♥</span>
+        <h1>Welcome Back</h1>
+        <p>Sign in to manage your F&C activity.</p>
+    </div>
+
+    <div class="auth-card">
+        <form method="POST">
+            <label>Login as</label>
+            <input type="hidden" name="role" id="loginRole" value="donor">
+            <div class="role-tabs">
+                <button type="button" class="role-tab selected" data-role="donor">Donor</button>
+                <button type="button" class="role-tab" data-role="receiver">Recipient</button>
+                <button type="button" class="role-tab" data-role="admin">Admin</button>
+                <button type="button" class="role-tab" data-role="">Any</button>
+            </div>
+
+            <label for="email">Email Address</label>
+            <input id="email" type="email" name="email" class="form-control" placeholder="you@example.com" required>
+
+            <label for="password">Password</label>
+            <div class="password-wrap">
+                <input id="password" type="password" name="password" class="form-control" placeholder="Enter your password" required>
+                <button type="button" class="password-btn" onclick="togglePassword('password')" aria-label="Show password">👁</button>
+            </div>
+
+            <div class="login-options">
+                <label class="check-label"><input type="checkbox" name="remember"> Remember me</label>
+                <span class="text-secondary">Use your registered account</span>
+            </div>
+
+            <button class="btn btn-primary w-100 form-button">Sign In</button>
+        </form>
+
+        <div class="demo-note mt-4 p-3 rounded-3" style="background:#f0f9ff;border:1px solid #d8eef9;font-size:13px">
+            <strong>Demo accounts:</strong><br>
+            donor@example.com / password123<br>
+            receiver@example.com / password123<br>
+            admin@example.com / password123
+        </div>
+
+        <p class="auth-bottom">Don't have an account? <a href="{{ url_for('register') }}">Register free</a></p>
+    </div>
+</section>
+{% endblock %}
