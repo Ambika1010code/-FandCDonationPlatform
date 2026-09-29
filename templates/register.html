@@ -1,44 +1,202 @@
 {% extends 'base.html' %}
+
 {% block title %}Register | F&C{% endblock %}
+
 {% block content %}
 <section class="auth-page register-page">
+
     <div class="auth-heading">
         <span class="auth-logo">♥</span>
         <h1>Create Your Account</h1>
         <p>Join the F&C community today.</p>
-        <div class="progress-lines"><span></span><span></span></div>
+
+        <div class="progress-lines">
+            <span></span>
+            <span></span>
+        </div>
     </div>
+
 
     <div class="auth-card register-card">
+
         <form method="POST" id="registerForm">
+
             <h3>Choose your account type</h3>
+
             <div class="register-roles">
+
+                <!-- DONOR -->
                 <label class="register-role selected">
-                    <input type="radio" name="role" value="donor" checked>
-                    <span class="big-emoji">🎁</span><b>Donor</b><small>Donate food and clothes.</small>
+                    <input type="radio"
+                           name="role"
+                           value="donor"
+                           checked>
+
+                    <span class="big-emoji">🎁</span>
+                    <b>Donor</b>
+                    <small>Donate food and clothes.</small>
                 </label>
+
+
+                <!-- RECIPIENT -->
                 <label class="register-role">
-                    <input type="radio" name="role" value="receiver">
-                    <span class="big-emoji">🙏</span><b>Recipient</b><small>Request food and clothes.</small>
+                    <input type="radio"
+                           name="role"
+                           value="receiver">
+
+                    <span class="big-emoji">🙏</span>
+                    <b>Recipient</b>
+                    <small>Request food and clothes.</small>
                 </label>
-                <div class="register-role disabled"><span class="big-emoji">🏢</span><b>NGO</b><small>Admin-managed partner role.</small></div>
-                <div class="register-role disabled"><span class="big-emoji">🤝</span><b>Volunteer</b><small>Can be added in a future version.</small></div>
+
+
+                <!-- NGO -->
+                <label class="register-role">
+                    <input type="radio"
+                           name="role"
+                           value="ngo">
+
+                    <span class="big-emoji">🏢</span>
+                    <b>NGO</b>
+                    <small>Manage and support donation activities.</small>
+                </label>
+
+
+                <!-- VOLUNTEER -->
+                <label class="register-role">
+                    <input type="radio"
+                           name="role"
+                           value="volunteer">
+
+                    <span class="big-emoji">🤝</span>
+                    <b>Volunteer</b>
+                    <small>Help with food and clothes donation activities.</small>
+                </label>
+
             </div>
+
+
+            <!-- REGISTRATION FIELDS -->
 
             <div class="register-fields">
+
                 <div class="row g-3">
-                    <div class="col-md-6"><label>Full Name</label><input name="name" class="form-control" placeholder="Your name" required></div>
-                    <div class="col-md-6"><label>Phone</label><input name="phone" class="form-control" placeholder="+977 98XXXXXXXX"></div>
-                    <div class="col-md-6"><label>Email</label><input type="email" name="email" class="form-control" placeholder="you@example.com" required></div>
-                    <div class="col-md-6"><label>Address</label><input name="address" class="form-control" placeholder="City, District"></div>
-                    <div class="col-md-6"><label>Password</label><input type="password" name="password" class="form-control" minlength="6" required></div>
-                    <div class="col-md-6"><label>Confirm Password</label><input type="password" name="confirm_password" class="form-control" minlength="6" required></div>
+
+                    <div class="col-md-6">
+                        <label>Full Name</label>
+                        <input
+                            name="name"
+                            class="form-control"
+                            placeholder="Your name"
+                            required>
+                    </div>
+
+
+                    <div class="col-md-6">
+                        <label>Phone</label>
+                        <input
+                            name="phone"
+                            class="form-control"
+                            placeholder="+977 98XXXXXXXX">
+                    </div>
+
+
+                    <div class="col-md-6">
+                        <label>Email</label>
+                        <input
+                            type="email"
+                            name="email"
+                            class="form-control"
+                            placeholder="you@example.com"
+                            required>
+                    </div>
+
+
+                    <div class="col-md-6">
+                        <label>Address</label>
+                        <input
+                            name="address"
+                            class="form-control"
+                            placeholder="City, District">
+                    </div>
+
+
+                    <div class="col-md-6">
+                        <label>Password</label>
+                        <input
+                            type="password"
+                            name="password"
+                            class="form-control"
+                            minlength="6"
+                            required>
+                    </div>
+
+
+                    <div class="col-md-6">
+                        <label>Confirm Password</label>
+                        <input
+                            type="password"
+                            name="confirm_password"
+                            class="form-control"
+                            minlength="6"
+                            required>
+                    </div>
+
                 </div>
+
             </div>
 
-            <button class="btn btn-primary w-100 form-button mt-4">Create Account →</button>
+
+            <button
+                type="submit"
+                class="btn btn-primary w-100 form-button mt-4">
+                Create Account →
+            </button>
+
         </form>
-        <p class="auth-bottom">Already have an account? <a href="{{ url_for('login') }}">Sign in</a></p>
+
+
+        <p class="auth-bottom">
+            Already have an account?
+            <a href="{{ url_for('login') }}">Sign in</a>
+        </p>
+
     </div>
+
 </section>
+
+
+<!-- ROLE SELECTION SCRIPT -->
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+
+    const roleCards = document.querySelectorAll(".register-role");
+
+    roleCards.forEach(function (card) {
+
+        card.addEventListener("click", function () {
+
+            // Remove selected from all cards
+            roleCards.forEach(function (item) {
+                item.classList.remove("selected");
+            });
+
+            // Select clicked card
+            card.classList.add("selected");
+
+            // Select radio button
+            const radio = card.querySelector('input[type="radio"]');
+
+            if (radio) {
+                radio.checked = true;
+            }
+
+        });
+
+    });
+
+});
+</script>
+
 {% endblock %}
