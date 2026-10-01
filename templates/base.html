@@ -29,8 +29,12 @@
                 <li class="nav-item"><a class="nav-link {% if request.path == '/' %}active{% endif %}" href="{{ url_for('index') }}">Home</a></li>
                 <li class="nav-item"><a class="nav-link {% if request.path == '/about' %}active{% endif %}" href="{{ url_for('about') }}">About</a></li>
                 <li class="nav-separator">|</li>
-                <li class="nav-item"><a class="nav-link {% if request.path == '/donate/food' %}active{% endif %}" href="{{ url_for('donate_food') }}">Donate Food</a></li>
-                <li class="nav-item"><a class="nav-link {% if request.path == '/donate/clothes' %}active{% endif %}" href="{{ url_for('donate_clothes') }}">Donate Clothes</a></li>
+                <li class="nav-item">
+                <a class="nav-link {% if request.path == '/donate' %}active{% endif %}"
+                href="{{ url_for('donate') }}">
+                 Donate
+                </a>
+                </li>
                 <li class="nav-item"><a class="nav-link {% if request.path == '/request/food' %}active{% endif %}" href="{{ url_for('request_food') }}">Request Food</a></li>
                 <li class="nav-item"><a class="nav-link {% if request.path == '/request/clothes' %}active{% endif %}" href="{{ url_for('request_clothes') }}">Request Clothes</a></li>
                 <li class="nav-separator">|</li>
@@ -92,8 +96,7 @@
             </div>
             <div class="col-lg-3">
                 <h5>Donate & Request</h5>
-                <a href="{{ url_for('donate_food') }}">Donate Food</a>
-                <a href="{{ url_for('donate_clothes') }}">Donate Clothes</a>
+                <a href="{{ url_for('donate') }}">Donate</a>
                 <a href="{{ url_for('request_food') }}">Request Food</a>
                 <a href="{{ url_for('request_clothes') }}">Request Clothes</a>
             </div>

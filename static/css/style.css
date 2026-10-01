@@ -1782,3 +1782,168 @@ textarea.form-control {
         height: auto !important;
     }
 }
+/* =========================================================
+   MULTIPLE DONATION ITEMS
+========================================================= */
+
+.donation-items-section {
+    border-top: 1px solid var(--border);
+    padding-top: 25px;
+}
+
+.donation-item-card {
+    background: #f8fcff;
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 22px;
+    margin-bottom: 15px;
+}
+
+.item-number {
+    font-weight: 700;
+    color: var(--sky-dark);
+    margin-bottom: 14px;
+}
+
+
+/* =========================================================
+   IMAGE PREVIEW
+========================================================= */
+
+.image-preview-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 12px;
+}
+
+.donation-preview-image {
+    width: 100%;
+    height: 110px;
+    object-fit: cover;
+    border-radius: 12px;
+    border: 1px solid var(--border);
+}
+
+
+/* =========================================================
+   HISTORY
+========================================================= */
+
+.history-donation-card {
+    background: #fff;
+    border: 1px solid var(--border);
+    border-radius: 17px;
+    padding: 24px;
+    box-shadow: 0 6px 18px rgba(15, 39, 64, .05);
+}
+
+.history-donation-card h4 {
+    margin-bottom: 2px;
+    font-weight: 700;
+}
+
+.history-items {
+    padding-left: 20px;
+}
+
+.history-items li {
+    margin-bottom: 9px;
+}
+
+
+/* =========================================================
+   HISTORY IMAGE GRID
+========================================================= */
+
+.history-image-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+}
+
+.history-image-grid img {
+    width: 100%;
+    height: 95px;
+    object-fit: cover;
+    border-radius: 10px;
+}
+
+
+/* =========================================================
+   ADMIN REPORT
+========================================================= */
+
+.report-status-card {
+    background: #f8fcff;
+    border: 1px solid var(--border);
+    border-radius: 15px;
+    padding: 20px;
+    text-align: center;
+}
+
+.report-status-card strong {
+    display: block;
+    font-size: 30px;
+    color: var(--sky-dark);
+}
+
+.report-status-card span {
+    color: var(--muted);
+    font-size: 13px;
+}
+
+
+.report-category-card {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    background: #f8fcff;
+    border: 1px solid var(--border);
+    border-radius: 15px;
+    padding: 20px;
+}
+
+.report-category-card > span {
+    font-size: 35px;
+}
+
+.report-category-card strong {
+    display: block;
+    font-size: 28px;
+    color: var(--navy);
+}
+
+.report-category-card small {
+    color: var(--muted);
+}
+
+
+.admin-item-list {
+    margin: 0;
+    padding-left: 18px;
+}
+
+.admin-item-list li {
+    margin-bottom: 5px;
+}
+
+
+/* =========================================================
+   RESPONSIVE
+========================================================= */
+
+@media (max-width: 768px) {
+
+    .image-preview-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .history-image-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .donation-item-card {
+        padding: 17px;
+    }
+
+}

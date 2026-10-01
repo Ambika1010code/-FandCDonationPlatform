@@ -1,20 +1,46 @@
 from datetime import datetime
+import json
+import os
+import uuid
 
 from flask import Flask, flash, redirect, render_template, request, session, url_for
 import mysql.connector
 from werkzeug.security import check_password_hash, generate_password_hash
+from werkzeug.utils import secure_filename
 
 from config import DB_HOST, DB_NAME, DB_PASSWORD, DB_USER, SECRET_KEY
-
 
 app = Flask(__name__)
 app.secret_key = SECRET_KEY
 
+app.config["MAX_CONTENT_LENGTH"] = 20 * 1024 * 1024
+
+UPLOAD_FOLDER = os.path.join(
+    app.root_path,
+    "static",
+    "uploads"
+)
+
+ALLOWED_IMAGE_EXTENSIONS = {
+    "jpg",
+    "jpeg",
+    "png",
+    "webp",
+    "gif"
+}
+
+os.makedirs(UPLOAD_FOLDER, exist_ok=True)
+
 
 ALLOWED_ROLES = {"donor", "receiver", "admin"}
-STATUS_OPTIONS = ["Pending", "Approved", "Collected", "Delivered", "Rejected"]
 
-
+STATUS_OPTIONS = [
+    "Pending",
+    "Approved",
+    "Collected",
+    "Delivered",
+    "Rejected"
+]
 def get_db_connection():
     return mysql.connector.connect(
         host=DB_HOST,
@@ -29,6 +55,66 @@ def close_db(cursor=None, db=None):
         cursor.close()
     if db:
         db.close()
+
+# =========================================================
+# IMAGE UPLOAD HELPERS
+# =========================================================
+
+def allowed_image(filename):
+    """Check whether the uploaded file has an allowed image extension."""
+    if not filename or "." not in filename:
+        return False
+
+    extension = filename.rsplit(".", 1)[1].lower()
+    return extension in ALLOWED_IMAGE_EXTENSIONS
+
+
+def save_uploaded_images(files):
+    """Save uploaded images and return their filenames."""
+    saved_files = []
+
+    for file in files:
+        if not file or not file.filename:
+            continue
+
+        if not allowed_image(file.filename):
+            continue
+
+        original_name = secure_filename(file.filename)
+
+        # Add a unique ID so two users can upload files with the same name.
+        unique_name = f"{uuid.uuid4().hex}_{original_name}"
+
+        file_path = os.path.join(UPLOAD_FOLDER, unique_name)
+        file.save(file_path)
+
+        saved_files.append(unique_name)
+
+    return saved_files
+
+
+def delete_uploaded_images(image_names):
+    """Delete uploaded images from the uploads folder."""
+    if not image_names:
+        return
+
+    if isinstance(image_names, str):
+        try:
+            image_names = json.loads(image_names)
+        except (json.JSONDecodeError, TypeError):
+            image_names = [image_names]
+
+    for image_name in image_names:
+        if not image_name:
+            continue
+
+        file_path = os.path.join(UPLOAD_FOLDER, os.path.basename(image_name))
+
+        if os.path.exists(file_path):
+            try:
+                os.remove(file_path)
+            except OSError:
+                pass
 
 
 def logged_in():
@@ -252,69 +338,237 @@ def logout():
     flash("You have been logged out.", "success")
     return redirect(url_for("index"))
 
+@app.route("/donate/food")
+def donate_food():
+    return redirect(url_for("donate"))
 
-@app.route("/donate")
+@app.route("/donate", methods=["GET", "POST"])
 def donate():
     if not role_required("donor"):
         flash("Please log in as a donor to donate.", "warning")
         return redirect(url_for("login"))
-    return redirect(url_for("donate_food"))
-
-
-@app.route("/donate/food", methods=["GET", "POST"])
-def donate_food():
-    if not role_required("donor"):
-        flash("Please log in as a donor.", "warning")
-        return redirect(url_for("login"))
 
     if request.method == "POST":
-        item_name = request.form.get("item_name", "").strip()
-        quantity_text = request.form.get("quantity", "").strip()
-        description = request.form.get("description", "").strip()
-        contact_phone = request.form.get("phone", "").strip()
-        condition = request.form.get("condition", "").strip()
+
+        item_types = request.form.getlist("item_type[]")
+        item_names = request.form.getlist("item_name[]")
+        quantities = request.form.getlist("quantity[]")
+        sizes = request.form.getlist("size[]")
+        conditions = request.form.getlist("condition[]")
+
         pickup_location = request.form.get("pickup_location", "").strip()
-        available_date = parse_datetime(request.form.get("available_date", "").strip())
+        contact_phone = request.form.get("phone", "").strip()
+        available_date = parse_datetime(
+            request.form.get("available_date", "").strip()
+        )
+        description = request.form.get("description", "").strip()
 
-        try:
-            quantity = int(quantity_text)
-        except ValueError:
-            quantity = 0
+        if not pickup_location:
+            flash("Pickup address is required.", "danger")
+            return redirect(url_for("donate"))
 
-        if not item_name or quantity <= 0 or not condition or not pickup_location:
-            flash("Please complete all required fields with a valid quantity.", "danger")
-            return redirect(url_for("donate_food"))
+        if not item_names:
+            flash("Please add at least one donation item.", "danger")
+            return redirect(url_for("donate"))
+
+        items = []
+
+        for i in range(len(item_names)):
+
+            item_type = (
+                item_types[i]
+                if i < len(item_types)
+                else ""
+            ).strip()
+
+            item_name = (
+                item_names[i]
+                if i < len(item_names)
+                else ""
+            ).strip()
+
+            quantity_text = (
+                quantities[i]
+                if i < len(quantities)
+                else ""
+            ).strip()
+
+            size = (
+                sizes[i]
+                if i < len(sizes)
+                else ""
+            ).strip()
+
+            condition = (
+                conditions[i]
+                if i < len(conditions)
+                else ""
+            ).strip()
+
+            try:
+                quantity = int(quantity_text)
+            except ValueError:
+                quantity = 0
+
+            if item_type not in {"Food", "Clothes"}:
+                flash(
+                    f"Invalid category for item {i + 1}.",
+                    "danger"
+                )
+                return redirect(url_for("donate"))
+
+            if not item_name:
+                flash(
+                    f"Please select an item for item {i + 1}.",
+                    "danger"
+                )
+                return redirect(url_for("donate"))
+
+            if quantity <= 0:
+                flash(
+                    f"Quantity must be greater than 0 for item {i + 1}.",
+                    "danger"
+                )
+                return redirect(url_for("donate"))
+
+            if item_type == "Clothes" and not size:
+                flash(
+                    f"Please select a size for clothing item {i + 1}.",
+                    "danger"
+                )
+                return redirect(url_for("donate"))
+
+            if not condition:
+                flash(
+                    f"Please select condition for item {i + 1}.",
+                    "danger"
+                )
+                return redirect(url_for("donate"))
+
+            items.append({
+                "type": item_type,
+                "name": item_name,
+                "quantity": quantity,
+                "size": size if item_type == "Clothes" else "",
+                "condition": condition
+            })
+
+        images, image_error = save_uploaded_images(
+            request.files.getlist("images")
+        )
+
+        if image_error:
+            flash(image_error, "danger")
+            return redirect(url_for("donate"))
+
+        if not images:
+            images = []
+
+        donation_types = {item["type"] for item in items}
+
+        if len(donation_types) == 1:
+            donation_type = list(donation_types)[0]
+        else:
+            donation_type = "Food & Clothes"
+
+        first_item = items[0]
+
+        total_quantity = sum(
+            item["quantity"]
+            for item in items
+        )
+
+        sizes_used = {
+            item["size"]
+            for item in items
+            if item["size"]
+        }
+
+        if len(sizes_used) == 1:
+            main_size = list(sizes_used)[0]
+        elif len(sizes_used) > 1:
+            main_size = "Mixed"
+        else:
+            main_size = None
+
+        conditions_used = {
+            item["condition"]
+            for item in items
+        }
+
+        if len(conditions_used) == 1:
+            main_condition = list(conditions_used)[0]
+        else:
+            main_condition = "Mixed"
 
         db = cursor = None
+
         try:
             db = get_db_connection()
             cursor = db.cursor()
+
             cursor.execute(
-                """INSERT INTO donations
-                   (user_id, donation_type, item_name, quantity, description,
-                    contact_phone, `condition`, pickup_location, available_date, status)
-                   VALUES (%s, 'Food', %s, %s, %s, %s, %s, %s, %s, 'Pending')""",
+                """
+                INSERT INTO donations
                 (
-                    session["user_id"],
+                    user_id,
+                    donation_type,
                     item_name,
                     quantity,
+                    size,
+                    items_json,
+                    image_paths,
                     description,
                     contact_phone,
-                    condition,
+                    `condition`,
                     pickup_location,
                     available_date,
-                ),
+                    status
+                )
+                VALUES
+                (
+                    %s, %s, %s, %s, %s, %s, %s,
+                    %s, %s, %s, %s, %s, 'Pending'
+                )
+                """,
+                (
+                    session["user_id"],
+                    donation_type,
+                    first_item["name"],
+                    total_quantity,
+                    main_size,
+                    json.dumps(items),
+                    json.dumps(images),
+                    description,
+                    contact_phone,
+                    main_condition,
+                    pickup_location,
+                    available_date
+                )
             )
+
             db.commit()
-            flash("Food donation submitted successfully.", "success")
+
+            flash(
+                "Your donation was submitted successfully.",
+                "success"
+            )
+
             return redirect(url_for("history"))
+
         except mysql.connector.Error:
-            flash("Could not save the donation. Please try again.", "danger")
+            if images:
+                delete_uploaded_images(json.dumps(images))
+
+            flash(
+                "Could not save the donation. Please try again.",
+                "danger"
+            )
+
         finally:
             close_db(cursor, db)
 
-    return render_template("donate.html", donation_type="Food")
-
+    return render_template("donate.html")
 
 @app.route("/donate/clothes", methods=["GET", "POST"])
 def donate_clothes():

@@ -4,8 +4,32 @@
 <section class="dashboard-page">
 <div class="container-fluid px-4 px-lg-5 py-5">
     <div class="dashboard-head">
-        <div><div class="eyebrow">ADMIN PANEL</div><h1>F&C Management Dashboard</h1><p>Review users, donations, requests and contact messages.</p></div>
+
+    <div>
+
+        <div class="eyebrow">
+            ADMIN PANEL
+        </div>
+
+        <h1>
+            F&C Management Dashboard
+        </h1>
+
+        <p>
+            Review users, donations, requests and contact messages.
+        </p>
+
     </div>
+
+
+    <a
+        href="{{ url_for('admin_reports') }}"
+        class="btn btn-primary"
+    >
+        📊 View Reports & Tracking
+    </a>
+
+</div>
 
     <div class="row g-3 mb-5">
         <div class="col-sm-6 col-xl-3"><div class="dash-stat"><span>👥</span><strong>{{ users_count }}</strong><small>Total Users</small></div></div>
@@ -36,7 +60,41 @@
             <tbody>
             {% for row in donations %}
             <tr>
-                <td>{{ row.donor_name }}</td><td>{{ row.donation_type }}</td><td>{{ row.item_name }}</td><td>{{ row.quantity }}</td><td>{{ row.pickup_location }}</td>
+                <td>
+
+    {% if row.items_json %}
+
+        <ul class="admin-item-list">
+
+        {% for item in row.items %}
+
+            <li>
+
+                <strong>
+                    {{ item.name }}
+                </strong>
+
+                × {{ item.quantity }}
+
+                {% if item.size %}
+                    <span class="tag tag-blue">
+                        {{ item.size }}
+                    </span>
+                {% endif %}
+
+            </li>
+
+        {% endfor %}
+
+        </ul>
+
+    {% else %}
+
+        {{ row.item_name }}
+
+    {% endif %}
+
+</td>
                 <td>
                     <form class="admin-status-form" method="POST" action="{{ url_for('update_donation_status', donation_id=row.id) }}">
                         <select name="status" class="form-select">

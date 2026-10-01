@@ -1,82 +1,675 @@
 {% extends 'base.html' %}
-{% set is_clothes = donation_type == 'Clothes' %}
-{% block title %}Donate {{ donation_type }} | F&C{% endblock %}
+
+{% block title %}Donate | F&C Donation Platform{% endblock %}
+
 {% block content %}
-<section class="action-hero {{ 'green-gradient' if not is_clothes else 'blue-gradient' }}">
-    <div class="action-icon">{{ '👗' if is_clothes else '🍱' }}</div>
-    <h1>Donate {{ donation_type }}</h1>
-    <p>{{ 'Give clean, useful clothes a second life. Add the details and the admin can review your donation.' if is_clothes else 'Have extra food? Add the details below so it can reach someone who needs it.' }}</p>
+
+<section class="action-hero blue-gradient">
+    <div class="action-icon">💙</div>
+
+    <h1>Make a Donation</h1>
+
+    <p>
+        Give food, clothes or both in one simple donation.
+        You can add multiple items and upload up to 5 images.
+    </p>
 </section>
+
 
 <section class="form-area">
+
     <div class="form-card wide-form">
+
         <div class="d-flex justify-content-between align-items-center mb-4 gap-3">
-            <div><div class="eyebrow">NEW DONATION</div><h2 class="mb-0">{{ donation_type }} Donation Details</h2></div>
-            <span class="tag tag-blue">Logged in as donor</span>
+            <div>
+                <div class="eyebrow">NEW DONATION</div>
+                <h2 class="mb-0">Donation Details</h2>
+            </div>
+
+            <span class="tag tag-blue">
+                Logged in as donor
+            </span>
         </div>
 
-        <form method="POST">
+
+        <form
+            method="POST"
+            enctype="multipart/form-data"
+            id="donationForm"
+        >
+
+            <!-- BASIC INFORMATION -->
+
             <div class="row g-3">
+
                 <div class="col-md-6">
+
                     <label>Your Name</label>
-                    <input class="form-control" value="{{ current_user or '' }}" disabled>
+
+                    <input
+                        class="form-control"
+                        value="{{ current_user or '' }}"
+                        disabled
+                    >
+
                 </div>
+
+
                 <div class="col-md-6">
+
                     <label>Phone Number</label>
-                    <input name="phone" class="form-control" placeholder="+977 98XXXXXXXX">
+
+                    <input
+                        type="tel"
+                        name="phone"
+                        class="form-control"
+                        placeholder="+977 98XXXXXXXX"
+                    >
+
                 </div>
+
+
                 <div class="col-12">
+
                     <label>Pickup Address</label>
-                    <input name="pickup_location" class="form-control" placeholder="Bharatpur, Chitwan" required>
+
+                    <input
+                        name="pickup_location"
+                        class="form-control"
+                        placeholder="Bharatpur, Chitwan"
+                        required
+                    >
+
                 </div>
+
+
                 <div class="col-md-6">
-                    <label>{{ 'Clothes Type' if is_clothes else 'Food Type' }}</label>
-                    <select name="item_name" class="form-select" required>
-                        <option value="">Select type</option>
-                        {% if is_clothes %}
-                            <option>T-Shirts</option><option>Jackets</option><option>Children's Wear</option><option>Winter Clothes</option><option>Mixed Clothes</option>
-                        {% else %}
-                            <option>Cooked Meals</option><option>Groceries</option><option>Packaged Food</option><option>Fruits & Vegetables</option><option>Rice</option>
-                        {% endif %}
-                    </select>
-                </div>
-                <div class="col-md-6">
-                    <label>{{ 'Number of Items' if is_clothes else 'Quantity (servings / kg)' }}</label>
-                    <input type="number" min="1" name="quantity" class="form-control" placeholder="10" required>
-                </div>
-                {% if is_clothes %}
-                <div class="col-md-6">
-                    <label>Size</label>
-                    <select name="size" class="form-select" required>
-                        <option value="">Select size</option><option>Small</option><option>Medium</option><option>Large</option><option>XL</option><option>Mixed</option>
-                    </select>
-                </div>
-                {% endif %}
-                <div class="col-md-6">
-                    <label>Condition</label>
-                    <div class="condition-buttons">
-                        <label><input type="radio" name="condition" value="Fresh" required> Fresh</label>
-                        <label><input type="radio" name="condition" value="Good"> Good</label>
-                        <label><input type="radio" name="condition" value="Packaged"> Packaged</label>
-                    </div>
-                </div>
-                {% if not is_clothes %}
-                <div class="col-md-6">
+
                     <label>Available Date & Time</label>
-                    <input type="datetime-local" name="available_date" class="form-control">
+
+                    <input
+                        type="datetime-local"
+                        name="available_date"
+                        class="form-control"
+                    >
+
                 </div>
-                {% endif %}
-                <div class="col-12">
-                    <label>Additional Notes</label>
-                    <textarea name="description" class="form-control" rows="4" placeholder="Special instructions, food information, pickup timing, etc."></textarea>
-                </div>
-                <div class="col-12">
-                    <button class="btn {{ 'btn-green' if not is_clothes else 'btn-primary' }} w-100 form-button">
-                        Submit {{ donation_type }} Donation
-                    </button>
-                </div>
+
             </div>
+
+
+            <!-- ITEMS -->
+
+            <div class="donation-items-section mt-4">
+
+                <div class="d-flex justify-content-between align-items-center mb-3">
+
+                    <div>
+                        <h3 class="mb-1">Donation Items</h3>
+
+                        <p class="text-secondary mb-0">
+                            Add one or more food/clothing items.
+                        </p>
+                    </div>
+
+                    <button
+                        type="button"
+                        class="btn btn-outline-primary"
+                        onclick="addDonationItem()"
+                    >
+                        + Add Item
+                    </button>
+
+                </div>
+
+
+                <div id="donationItems">
+
+                    <div class="donation-item-card">
+
+                        <div class="item-number">
+                            Item 1
+                        </div>
+
+
+                        <div class="row g-3">
+
+                            <div class="col-md-4">
+
+                                <label>Category</label>
+
+                                <select
+                                    name="item_type[]"
+                                    class="form-select item-type"
+                                    onchange="updateItemOptions(this)"
+                                    required
+                                >
+
+                                    <option value="">
+                                        Select category
+                                    </option>
+
+                                    <option value="Food">
+                                        🍱 Food
+                                    </option>
+
+                                    <option value="Clothes">
+                                        👕 Clothes
+                                    </option>
+
+                                </select>
+
+                            </div>
+
+
+                            <div class="col-md-4">
+
+                                <label>Item</label>
+
+                                <select
+                                    name="item_name[]"
+                                    class="form-select item-name"
+                                    required
+                                >
+
+                                    <option value="">
+                                        Select item
+                                    </option>
+
+                                </select>
+
+                            </div>
+
+
+                            <div class="col-md-4">
+
+                                <label>Quantity</label>
+
+                                <input
+                                    type="number"
+                                    min="1"
+                                    name="quantity[]"
+                                    class="form-control"
+                                    placeholder="10"
+                                    required
+                                >
+
+                            </div>
+
+
+                            <div class="col-md-6 size-field">
+
+                                <label>Size</label>
+
+                                <select
+                                    name="size[]"
+                                    class="form-select"
+                                >
+
+                                    <option value="">
+                                        Select size
+                                    </option>
+
+                                    <option value="Small">
+                                        Small
+                                    </option>
+
+                                    <option value="Medium">
+                                        Medium
+                                    </option>
+
+                                    <option value="Large">
+                                        Large
+                                    </option>
+
+                                    <option value="XL">
+                                        XL
+                                    </option>
+
+                                    <option value="Mixed">
+                                        Mixed
+                                    </option>
+
+                                </select>
+
+                            </div>
+
+
+                            <div class="col-md-6">
+
+                                <label>Condition</label>
+
+                                <select
+                                    name="condition[]"
+                                    class="form-select"
+                                    required
+                                >
+
+                                    <option value="">
+                                        Select condition
+                                    </option>
+
+                                    <option value="Fresh">
+                                        Fresh
+                                    </option>
+
+                                    <option value="Good">
+                                        Good
+                                    </option>
+
+                                    <option value="Packaged">
+                                        Packaged
+                                    </option>
+
+                                </select>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- IMAGES -->
+
+            <div class="mt-4">
+
+                <label>
+                    Donation Images
+                    <span class="text-secondary">
+                        (Maximum 5)
+                    </span>
+                </label>
+
+                <input
+                    type="file"
+                    name="images"
+                    id="donationImages"
+                    class="form-control"
+                    accept="image/png,image/jpeg,image/webp,image/gif"
+                    multiple
+                    onchange="previewDonationImages(this)"
+                >
+
+                <small class="text-secondary">
+                    Upload up to 5 clear images of the donated items.
+                </small>
+
+
+                <div
+                    id="imagePreview"
+                    class="image-preview-grid mt-3"
+                ></div>
+
+            </div>
+
+
+            <!-- DESCRIPTION -->
+
+            <div class="mt-4">
+
+                <label>Additional Notes</label>
+
+                <textarea
+                    name="description"
+                    class="form-control"
+                    rows="4"
+                    placeholder="Special instructions, food information, pickup timing, etc."
+                ></textarea>
+
+            </div>
+
+
+            <!-- SUBMIT -->
+
+            <button
+                type="submit"
+                class="btn btn-primary w-100 form-button mt-4"
+            >
+                Submit Donation
+            </button>
+
         </form>
+
     </div>
+
 </section>
+
+{% endblock %}
+
+
+{% block scripts %}
+
+<script>
+
+const foodItems = [
+    "Cooked Meals",
+    "Groceries",
+    "Packaged Food",
+    "Fruits & Vegetables",
+    "Rice",
+    "Bread",
+    "Canned Food"
+];
+
+const clothesItems = [
+    "T-Shirts",
+    "Shirts",
+    "Pants",
+    "Jackets",
+    "Children's Wear",
+    "Winter Clothes",
+    "Shoes",
+    "Mixed Clothes"
+];
+
+
+function updateItemOptions(select) {
+
+    const card = select.closest(".donation-item-card");
+
+    const itemSelect = card.querySelector(".item-name");
+
+    const sizeField = card.querySelector(".size-field");
+
+    itemSelect.innerHTML =
+        '<option value="">Select item</option>';
+
+    if (select.value === "Food") {
+
+        foodItems.forEach(function(item) {
+
+            const option = document.createElement("option");
+
+            option.value = item;
+            option.textContent = item;
+
+            itemSelect.appendChild(option);
+
+        });
+
+        sizeField.style.display = "none";
+
+    }
+
+
+    else if (select.value === "Clothes") {
+
+        clothesItems.forEach(function(item) {
+
+            const option = document.createElement("option");
+
+            option.value = item;
+            option.textContent = item;
+
+            itemSelect.appendChild(option);
+
+        });
+
+        sizeField.style.display = "block";
+
+    }
+
+
+    else {
+
+        sizeField.style.display = "block";
+
+    }
+
+}
+
+
+function addDonationItem() {
+
+    const container =
+        document.getElementById("donationItems");
+
+    const number =
+        container.children.length + 1;
+
+
+    const card =
+        document.createElement("div");
+
+    card.className =
+        "donation-item-card";
+
+
+    card.innerHTML = `
+
+        <div class="d-flex justify-content-between align-items-center mb-3">
+
+            <div class="item-number">
+                Item ${number}
+            </div>
+
+            <button
+                type="button"
+                class="btn btn-sm btn-outline-danger"
+                onclick="removeDonationItem(this)"
+            >
+                Remove
+            </button>
+
+        </div>
+
+
+        <div class="row g-3">
+
+            <div class="col-md-4">
+
+                <label>Category</label>
+
+                <select
+                    name="item_type[]"
+                    class="form-select item-type"
+                    onchange="updateItemOptions(this)"
+                    required
+                >
+
+                    <option value="">
+                        Select category
+                    </option>
+
+                    <option value="Food">
+                        🍱 Food
+                    </option>
+
+                    <option value="Clothes">
+                        👕 Clothes
+                    </option>
+
+                </select>
+
+            </div>
+
+
+            <div class="col-md-4">
+
+                <label>Item</label>
+
+                <select
+                    name="item_name[]"
+                    class="form-select item-name"
+                    required
+                >
+
+                    <option value="">
+                        Select item
+                    </option>
+
+                </select>
+
+            </div>
+
+
+            <div class="col-md-4">
+
+                <label>Quantity</label>
+
+                <input
+                    type="number"
+                    min="1"
+                    name="quantity[]"
+                    class="form-control"
+                    required
+                >
+
+            </div>
+
+
+            <div class="col-md-6 size-field">
+
+                <label>Size</label>
+
+                <select
+                    name="size[]"
+                    class="form-select"
+                >
+
+                    <option value="">
+                        Select size
+                    </option>
+
+                    <option>Small</option>
+                    <option>Medium</option>
+                    <option>Large</option>
+                    <option>XL</option>
+                    <option>Mixed</option>
+
+                </select>
+
+            </div>
+
+
+            <div class="col-md-6">
+
+                <label>Condition</label>
+
+                <select
+                    name="condition[]"
+                    class="form-select"
+                    required
+                >
+
+                    <option value="">
+                        Select condition
+                    </option>
+
+                    <option>Fresh</option>
+                    <option>Good</option>
+                    <option>Packaged</option>
+
+                </select>
+
+            </div>
+
+        </div>
+
+    `;
+
+
+    container.appendChild(card);
+}
+
+
+function removeDonationItem(button) {
+
+    const container =
+        document.getElementById("donationItems");
+
+    if (container.children.length <= 1) {
+
+        alert("At least one donation item is required.");
+
+        return;
+
+    }
+
+    button.closest(".donation-item-card").remove();
+
+    updateItemNumbers();
+}
+
+
+function updateItemNumbers() {
+
+    const cards =
+        document.querySelectorAll(".donation-item-card");
+
+    cards.forEach(function(card, index) {
+
+        const number =
+            card.querySelector(".item-number");
+
+        if (number) {
+
+            number.textContent =
+                "Item " + (index + 1);
+
+        }
+
+    });
+
+}
+
+
+function previewDonationImages(input) {
+
+    const preview =
+        document.getElementById("imagePreview");
+
+    preview.innerHTML = "";
+
+    const files =
+        Array.from(input.files);
+
+
+    if (files.length > 5) {
+
+        alert("You can upload a maximum of 5 images.");
+
+        input.value = "";
+
+        return;
+
+    }
+
+
+    files.forEach(function(file) {
+
+        const reader =
+            new FileReader();
+
+
+        reader.onload =
+            function(event) {
+
+                const img =
+                    document.createElement("img");
+
+                img.src =
+                    event.target.result;
+
+                img.className =
+                    "donation-preview-image";
+
+                preview.appendChild(img);
+
+            };
+
+
+        reader.readAsDataURL(file);
+
+    });
+
+}
+
+</script>
+
 {% endblock %}

@@ -1,0 +1,383 @@
+{% extends 'base.html' %}
+
+{% block title %}
+Admin Reports | F&C
+{% endblock %}
+
+{% block content %}
+
+<section class="dashboard-page">
+
+<div class="container-fluid px-4 px-lg-5 py-5">
+
+
+    <div class="dashboard-head">
+
+        <div>
+
+            <div class="eyebrow">
+                ADMIN REPORT
+            </div>
+
+            <h1>
+                Donation Reports & Tracking
+            </h1>
+
+            <p>
+                Monitor donation activity, request activity
+                and current status.
+            </p>
+
+        </div>
+
+
+        <a
+            href="{{ url_for('admin_dashboard') }}"
+            class="btn btn-outline-primary"
+        >
+            ← Admin Dashboard
+        </a>
+
+    </div>
+
+
+    <!-- SUMMARY -->
+
+    <div class="row g-3 mb-5">
+
+
+        <div class="col-sm-6 col-xl-3">
+
+            <div class="dash-stat">
+
+                <span>👥</span>
+
+                <strong>
+                    {{ report.total_users }}
+                </strong>
+
+                <small>
+                    Total Users
+                </small>
+
+            </div>
+
+        </div>
+
+
+        <div class="col-sm-6 col-xl-3">
+
+            <div class="dash-stat">
+
+                <span>📦</span>
+
+                <strong>
+                    {{ report.total_donations }}
+                </strong>
+
+                <small>
+                    Donation Records
+                </small>
+
+            </div>
+
+        </div>
+
+
+        <div class="col-sm-6 col-xl-3">
+
+            <div class="dash-stat">
+
+                <span>🙏</span>
+
+                <strong>
+                    {{ report.total_requests }}
+                </strong>
+
+                <small>
+                    Request Records
+                </small>
+
+            </div>
+
+        </div>
+
+
+        <div class="col-sm-6 col-xl-3">
+
+            <div class="dash-stat">
+
+                <span>📊</span>
+
+                <strong>
+                    {{ report.total_quantity }}
+                </strong>
+
+                <small>
+                    Total Donated Quantity
+                </small>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- STATUS -->
+
+    <div class="form-card mb-4">
+
+        <h3>
+            Donation Status Tracking
+        </h3>
+
+        <div class="row g-3 mt-2">
+
+
+            <div class="col-md-3">
+
+                <div class="report-status-card">
+
+                    <strong>
+                        {{ report.pending }}
+                    </strong>
+
+                    <span>
+                        Pending
+                    </span>
+
+                </div>
+
+            </div>
+
+
+            <div class="col-md-3">
+
+                <div class="report-status-card">
+
+                    <strong>
+                        {{ report.approved }}
+                    </strong>
+
+                    <span>
+                        Approved
+                    </span>
+
+                </div>
+
+            </div>
+
+
+            <div class="col-md-3">
+
+                <div class="report-status-card">
+
+                    <strong>
+                        {{ report.collected }}
+                    </strong>
+
+                    <span>
+                        Collected
+                    </span>
+
+                </div>
+
+            </div>
+
+
+            <div class="col-md-3">
+
+                <div class="report-status-card">
+
+                    <strong>
+                        {{ report.delivered }}
+                    </strong>
+
+                    <span>
+                        Delivered
+                    </span>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- CATEGORY -->
+
+    <div class="form-card mb-4">
+
+        <h3>
+            Donation Category
+        </h3>
+
+        <div class="row g-3 mt-2">
+
+
+            <div class="col-md-6">
+
+                <div class="report-category-card">
+
+                    <span>
+                        🍱
+                    </span>
+
+                    <div>
+
+                        <strong>
+                            {{ report.food_donations }}
+                        </strong>
+
+                        <small>
+                            Food Donation Records
+                        </small>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <div class="col-md-6">
+
+                <div class="report-category-card">
+
+                    <span>
+                        👕
+                    </span>
+
+                    <div>
+
+                        <strong>
+                            {{ report.clothes_donations }}
+                        </strong>
+
+                        <small>
+                            Clothing Donation Records
+                        </small>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- TRACKING -->
+
+    <div class="form-card admin-table">
+
+        <div class="d-flex justify-content-between align-items-center">
+
+            <h3>
+                Recent Activity Tracking
+            </h3>
+
+            <span class="tag tag-blue">
+                Latest 50 records
+            </span>
+
+        </div>
+
+
+        <div class="table-responsive mt-3">
+
+            <table class="table">
+
+                <thead>
+
+                    <tr>
+
+                        <th>Type</th>
+                        <th>Person</th>
+                        <th>Category</th>
+                        <th>Item</th>
+                        <th>Quantity</th>
+                        <th>Status</th>
+                        <th>Date</th>
+
+                    </tr>
+
+                </thead>
+
+
+                <tbody>
+
+                {% for row in tracking %}
+
+                    <tr>
+
+                        <td>
+                            <span class="tag tag-blue">
+                                {{ row.record_type }}
+                            </span>
+                        </td>
+
+                        <td>
+                            {{ row.person_name }}
+                        </td>
+
+                        <td>
+                            {{ row.category }}
+                        </td>
+
+                        <td>
+                            {{ row.item_name }}
+                        </td>
+
+                        <td>
+                            {{ row.quantity }}
+                        </td>
+
+                        <td>
+
+                            <span class="status {{ row.status }}">
+                                {{ row.status }}
+                            </span>
+
+                        </td>
+
+                        <td>
+                            {{ row.created_at.strftime('%Y-%m-%d %H:%M') }}
+                        </td>
+
+                    </tr>
+
+                {% else %}
+
+                    <tr>
+
+                        <td
+                            colspan="7"
+                            class="text-center"
+                        >
+                            No activity found.
+                        </td>
+
+                    </tr>
+
+                {% endfor %}
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+
+</div>
+
+</section>
+
+{% endblock %}
