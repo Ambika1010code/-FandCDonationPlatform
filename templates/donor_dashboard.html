@@ -1,39 +1,5 @@
-{% extends 'base.html' %}
-{% block title %}Donor Dashboard | F&C{% endblock %}
-{% block content %}
-<section class="dashboard-page">
-<div class="container py-5">
-    <div class="dashboard-head">
-        <div><div class="eyebrow">DONOR DASHBOARD</div><h1>Welcome, {{ current_user }}</h1><p>Manage your donations and see their current status.</p></div>
-        <div class="d-flex gap-2"><a href="{{ url_for('donate_food') }}" class="btn btn-green">+ Donate Food</a><a href="{{ url_for('profile') }}" class="btn btn-outline-primary">My Profile</a></div>
-    </div>
-
-    <div class="row g-4 mb-4">
-        <div class="col-md-4"><div class="dash-stat"><span>📦</span><strong>{{ total }}</strong><small>Total Donations</small></div></div>
-        <div class="col-md-4"><div class="dash-stat"><span>⏳</span><strong>{{ pending }}</strong><small>Pending Review</small></div></div>
-        <div class="col-md-4"><div class="dash-stat"><span>✅</span><strong>{{ delivered }}</strong><small>Delivered</small></div></div>
-    </div>
-
-    <div class="row g-4 mb-4">
-        <div class="col-md-6"><a class="dash-action" href="{{ url_for('donate_food') }}">🍱 <b>Donate Food</b><small>Meals, groceries, packaged food and more.</small></a></div>
-        <div class="col-md-6"><a class="dash-action" href="{{ url_for('donate_clothes') }}">👗 <b>Donate Clothes</b><small>Share clean clothes with people who need them.</small></a></div>
-    </div>
-
-    <div class="form-card">
-        <div class="d-flex justify-content-between align-items-center mb-3"><h3 class="mb-0">Recent Donations</h3><a href="{{ url_for('history') }}">View full history</a></div>
-        <div class="table-responsive">
-            <table class="table">
-                <thead><tr><th>Item</th><th>Type</th><th>Quantity</th><th>Status</th><th>Date</th></tr></thead>
-                <tbody>
-                {% for row in recent %}
-                    <tr><td>{{ row.item_name }}</td><td>{{ row.donation_type }}</td><td>{{ row.quantity }}</td><td><span class="status {{ row.status }}">{{ row.status }}</span></td><td>{{ row.created_at.strftime('%Y-%m-%d') }}</td></tr>
-                {% else %}
-                    <tr><td colspan="5" class="text-center py-4">No donations yet. Start with the buttons above.</td></tr>
-                {% endfor %}
-                </tbody>
-            </table>
-        </div>
-    </div>
-</div>
-</section>
+{% extends 'base.html' %}{% block title %}My Dashboard | F&C{% endblock %}{% block content %}
+<section class="dashboard-page"><div class="container py-5"><div class="dashboard-head"><div><div class="eyebrow">MEMBER DASHBOARD</div><h1>Welcome, {{ current_user }}</h1><p>Your account can both donate and request support.</p></div><div class="d-flex gap-2"><a href="{{ url_for('donate') }}" class="btn btn-primary">+ Donate</a><a href="{{ url_for('request_help') }}" class="btn btn-outline-primary">+ Request</a></div></div>
+<div class="row g-4 mb-4"><div class="col-md-3"><div class="dash-stat"><strong>{{ stats.donations }}</strong><small>Donations</small></div></div><div class="col-md-3"><div class="dash-stat"><strong>{{ stats.requests }}</strong><small>Requests</small></div></div><div class="col-md-3"><div class="dash-stat"><strong>{{ stats.pending }}</strong><small>Pending</small></div></div><div class="col-md-3"><div class="dash-stat"><strong>{{ stats.approved }}</strong><small>Approved</small></div></div></div>
+<div class="row g-4"><div class="col-lg-6"><div class="form-card"><h3>Recent Donations</h3><div class="table-responsive"><table class="table"><thead><tr><th>Items</th><th>Qty</th><th>Status</th></tr></thead><tbody>{% for d in donations %}<tr><td>{{ d.item_name }}</td><td>{{ d.quantity }}</td><td><span class="status {{ d.status }}">{{ d.status }}</span></td></tr>{% else %}<tr><td colspan="3">No donations yet.</td></tr>{% endfor %}</tbody></table></div></div></div><div class="col-lg-6"><div class="form-card"><h3>Recent Requests</h3><div class="table-responsive"><table class="table"><thead><tr><th>Item</th><th>Qty</th><th>Status</th></tr></thead><tbody>{% for r in requests_list %}<tr><td>{{ r.item_name }}</td><td>{{ r.quantity }}</td><td><span class="status {{ r.status }}">{{ r.status }}</span></td></tr>{% else %}<tr><td colspan="3">No requests yet.</td></tr>{% endfor %}</tbody></table></div></div></div></div></div></section>
 {% endblock %}
