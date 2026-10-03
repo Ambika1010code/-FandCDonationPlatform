@@ -1,37 +1,323 @@
 {% extends 'base.html' %}
-{% block title %}Contact | F&C{% endblock %}
+
+{% block title %}Contact | F&C Donation Platform{% endblock %}
+
 {% block content %}
-<section class="blue-hero">
-    <div class="eyebrow" style="color:#eaffff">GET IN TOUCH</div>
-    <h1>Contact Us</h1>
-    <p>Have a question, suggestion or partnership idea? Send a message and it will appear in the admin dashboard.</p>
-</section>
 
-<section class="contact-section container-fluid px-4 px-lg-5 py-5">
-    <div class="row g-5 align-items-start">
-        <div class="col-lg-5">
-            <h2>Let's Talk</h2>
-            <div class="contact-item"><span>📍</span><div><b>Address</b><p>Gaindakot-2, Nawalpur, Nepal</p></div></div>
-            <div class="contact-item"><span>📞</span><div><b>Phone</b><p>+977 98765 43210</p></div></div>
-            <div class="contact-item"><span>✉️</span><div><b>Email</b><p>fncdonation@gmail.com</p></div></div>
-            <div class="contact-item"><span>🕘</span><div><b>Hours</b><p>Sun–Fri, 9:00 AM – 5:00 PM</p></div></div>
-        </div>
+<!-- =========================
+     CONTACT HERO
+========================= -->
 
-        <div class="col-lg-7">
-            <div class="form-card">
-                <div class="eyebrow">MESSAGE FORM</div>
-                <h3>Send a Message</h3>
-                <form method="POST">
-                    <div class="row g-3">
-                        <div class="col-md-6"><label>Full Name</label><input name="name" class="form-control" placeholder="Your name" required></div>
-                        <div class="col-md-6"><label>Email</label><input type="email" name="email" class="form-control" placeholder="you@example.com" required></div>
-                        <div class="col-12"><label>Subject</label><input name="subject" class="form-control" placeholder="Partnership, feedback, question..." required></div>
-                        <div class="col-12"><label>Message</label><textarea name="message" class="form-control" rows="6" placeholder="Write your message here..." required></textarea></div>
-                        <div class="col-12"><button class="btn btn-primary w-100 form-button">Send Message</button></div>
-                    </div>
-                </form>
-            </div>
-        </div>
+<section class="action-hero blue-gradient">
+
+    <div class="action-icon">
+        💬
     </div>
+
+    <h1>
+        Contact Us
+    </h1>
+
+    <p>
+        Have a question, suggestion or partnership idea?
+        Send us a message and our team will get back to you.
+    </p>
+
 </section>
+
+
+<!-- =========================
+     CONTACT SECTION
+========================= -->
+
+<section class="form-area">
+
+    <div class="container">
+
+        <div class="row g-4 align-items-stretch">
+
+
+            <!-- =========================
+                 CONTACT INFORMATION CARD
+            ========================= -->
+
+            <div class="col-lg-5">
+
+                <div class="form-card h-100">
+
+                    <div class="eyebrow">
+                        GET IN TOUCH
+                    </div>
+
+                    <h2 class="mb-3">
+                        Let's Talk
+                    </h2>
+
+                    <p class="text-secondary mb-4">
+                        We would love to hear from you.
+                        Contact us for questions, suggestions,
+                        feedback or partnership opportunities.
+                    </p>
+
+
+                    <!-- ADDRESS -->
+
+                    <div class="contact-item">
+
+                        <span class="contact-icon">
+                            📍
+                        </span>
+
+                        <div>
+
+                            <b>
+                                Address
+                            </b>
+
+                            <p>
+                                Gaindakot-2, Nawalpur, Nepal
+                            </p>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- PHONE -->
+
+                    <div class="contact-item">
+
+                        <span class="contact-icon">
+                            📞
+                        </span>
+
+                        <div>
+
+                            <b>
+                                Phone
+                            </b>
+
+                            <p>
+                                +977 98765 43210
+                            </p>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- EMAIL -->
+
+                    <div class="contact-item">
+
+                        <span class="contact-icon">
+                            ✉️
+                        </span>
+
+                        <div>
+
+                            <b>
+                                Email
+                            </b>
+
+                            <p>
+                                fncdonation@gmail.com
+                            </p>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- HOURS -->
+
+                    <div class="contact-item">
+
+                        <span class="contact-icon">
+                            🕘
+                        </span>
+
+                        <div>
+
+                            <b>
+                                Hours
+                            </b>
+
+                            <p>
+                                Sun–Fri, 9:00 AM – 5:00 PM
+                            </p>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- SMALL MESSAGE -->
+
+                    <div class="mt-4 p-3 rounded-3 bg-light">
+
+                        <strong>
+                            💚 We are here to help
+                        </strong>
+
+                        <p class="text-secondary mb-0 mt-1">
+                            Your feedback helps us improve the
+                            F&C Donation Platform.
+                        </p>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- =========================
+                 MESSAGE FORM CARD
+            ========================= -->
+
+            <div class="col-lg-7">
+
+                <div class="form-card h-100">
+
+                    <div class="d-flex justify-content-between align-items-center mb-4 gap-3 flex-wrap">
+
+                        <div>
+
+                            <div class="eyebrow">
+                                MESSAGE FORM
+                            </div>
+
+                            <h2 class="mb-0">
+                                Send a Message
+                            </h2>
+
+                        </div>
+
+                        <span class="tag tag-blue">
+                            We'd love to hear from you
+                        </span>
+
+                    </div>
+
+
+                    <p class="text-secondary mb-4">
+                        Fill out the form below and send your
+                        message directly to the F&C team.
+                    </p>
+
+
+                    <!-- FORM -->
+
+                    <form
+                        method="POST"
+                        id="contactForm"
+                    >
+
+                        <div class="row g-3">
+
+
+                            <!-- NAME -->
+
+                            <div class="col-md-6">
+
+                                <label>
+                                    Full Name
+                                </label>
+
+                                <input
+                                    type="text"
+                                    name="name"
+                                    class="form-control"
+                                    placeholder="Your name"
+                                    required
+                                >
+
+                            </div>
+
+
+                            <!-- EMAIL -->
+
+                            <div class="col-md-6">
+
+                                <label>
+                                    Email
+                                </label>
+
+                                <input
+                                    type="email"
+                                    name="email"
+                                    class="form-control"
+                                    placeholder="you@example.com"
+                                    required
+                                >
+
+                            </div>
+
+
+                            <!-- SUBJECT -->
+
+                            <div class="col-12">
+
+                                <label>
+                                    Subject
+                                </label>
+
+                                <input
+                                    type="text"
+                                    name="subject"
+                                    class="form-control"
+                                    placeholder="Partnership, feedback, question..."
+                                    required
+                                >
+
+                            </div>
+
+
+                            <!-- MESSAGE -->
+
+                            <div class="col-12">
+
+                                <label>
+                                    Message
+                                </label>
+
+                                <textarea
+                                    name="message"
+                                    class="form-control"
+                                    rows="7"
+                                    placeholder="Write your message here..."
+                                    required
+                                ></textarea>
+
+                            </div>
+
+
+                            <!-- SUBMIT -->
+
+                            <div class="col-12">
+
+                                <button
+                                    type="submit"
+                                    class="btn btn-primary w-100 form-button"
+                                >
+                                    ✉️ Send Message
+                                </button>
+
+                            </div>
+
+                        </div>
+
+                    </form>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
 {% endblock %}

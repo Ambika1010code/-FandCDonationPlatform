@@ -83,3 +83,21 @@ VALUES
 INSERT INTO contact_messages (name, email, subject, message)
 VALUES
 ('Demo Visitor', 'visitor@example.com', 'Partnership Inquiry', 'I would like to know more about partnering with F&C.');
+
+ALTER TABLE donations
+MODIFY donation_type ENUM(
+    'Food',
+    'Clothes',
+    'Accessories',
+    'Food & Clothes',
+    'Food & Accessories',
+    'Clothes & Accessories',
+    'Food, Clothes & Accessories'
+) NOT NULL;
+
+ALTER TABLE donation_requests
+MODIFY request_type ENUM(
+    'Food',
+    'Clothes',
+    'Accessories'
+) NOT NULL;

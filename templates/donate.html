@@ -10,7 +10,7 @@
     <h1>Make a Donation</h1>
 
     <p>
-        Give food, clothes or both in one simple donation.
+        Give food, clothes or useful accessories through one simple donation.
         You can add multiple items and upload up to 5 images.
     </p>
 </section>
@@ -20,7 +20,8 @@
 
     <div class="form-card wide-form">
 
-        <div class="d-flex justify-content-between align-items-center mb-4 gap-3">
+        <div class="d-flex justify-content-between align-items-center mb-4 gap-3 flex-wrap">
+
             <div>
                 <div class="eyebrow">NEW DONATION</div>
                 <h2 class="mb-0">Donation Details</h2>
@@ -29,11 +30,13 @@
             <span class="tag tag-blue">
                 Logged in as donor
             </span>
+
         </div>
 
 
         <form
             method="POST"
+            action="{{ url_for('donate') }}"
             enctype="multipart/form-data"
             id="donationForm"
         >
@@ -102,15 +105,18 @@
 
             <div class="donation-items-section mt-4">
 
-                <div class="d-flex justify-content-between align-items-center mb-3">
+                <div class="d-flex justify-content-between align-items-center mb-3 gap-3 flex-wrap">
 
                     <div>
+
                         <h3 class="mb-1">Donation Items</h3>
 
                         <p class="text-secondary mb-0">
-                            Add one or more food/clothing items.
+                            Add one or more food, clothing or accessory items.
                         </p>
+
                     </div>
+
 
                     <button
                         type="button"
@@ -125,14 +131,22 @@
 
                 <div id="donationItems">
 
+                    <!-- FIRST ITEM -->
+
                     <div class="donation-item-card">
 
-                        <div class="item-number">
-                            Item 1
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+
+                            <div class="item-number">
+                                Item 1
+                            </div>
+
                         </div>
 
 
                         <div class="row g-3">
+
+                            <!-- CATEGORY -->
 
                             <div class="col-md-4">
 
@@ -157,10 +171,16 @@
                                         👕 Clothes
                                     </option>
 
+                                    <option value="Accessories">
+                                        🎒 Accessories
+                                    </option>
+
                                 </select>
 
                             </div>
 
+
+                            <!-- ITEM -->
 
                             <div class="col-md-4">
 
@@ -181,6 +201,8 @@
                             </div>
 
 
+                            <!-- QUANTITY -->
+
                             <div class="col-md-4">
 
                                 <label>Quantity</label>
@@ -196,6 +218,8 @@
 
                             </div>
 
+
+                            <!-- SIZE -->
 
                             <div class="col-md-6 size-field">
 
@@ -234,6 +258,8 @@
 
                             </div>
 
+
+                            <!-- CONDITION -->
 
                             <div class="col-md-6">
 
@@ -318,7 +344,7 @@
                     name="description"
                     class="form-control"
                     rows="4"
-                    placeholder="Special instructions, food information, pickup timing, etc."
+                    placeholder="Special instructions, food information, pickup timing, item details, etc."
                 ></textarea>
 
             </div>
@@ -346,6 +372,10 @@
 
 <script>
 
+/* =========================================================
+   DONATION ITEM OPTIONS
+   ========================================================= */
+
 const foodItems = [
     "Cooked Meals",
     "Groceries",
@@ -353,37 +383,73 @@ const foodItems = [
     "Fruits & Vegetables",
     "Rice",
     "Bread",
-    "Canned Food"
+    "Canned Food",
+    "Flour",
+    "Other Food"
 ];
+
 
 const clothesItems = [
     "T-Shirts",
     "Shirts",
     "Pants",
+    "Dresses",
     "Jackets",
+    "Sweaters",
     "Children's Wear",
     "Winter Clothes",
     "Shoes",
-    "Mixed Clothes"
+    "Mixed Clothes",
+    "Other Clothes"
 ];
 
 
+const accessoryItems = [
+    "Bags",
+    "School Bags",
+    "Books",
+    "Stationery",
+    "Blankets",
+    "Kitchen Items",
+    "Household Items",
+    "Shoes",
+    "Other Accessories"
+];
+
+
+/* =========================================================
+   UPDATE ITEM OPTIONS
+   ========================================================= */
+
 function updateItemOptions(select) {
 
-    const card = select.closest(".donation-item-card");
+    const card =
+        select.closest(".donation-item-card");
 
-    const itemSelect = card.querySelector(".item-name");
+    const itemSelect =
+        card.querySelector(".item-name");
 
-    const sizeField = card.querySelector(".size-field");
+    const sizeField =
+        card.querySelector(".size-field");
+
+    const sizeSelect =
+        card.querySelector('select[name="size[]"]');
+
+
+    /* Clear old item options */
 
     itemSelect.innerHTML =
         '<option value="">Select item</option>';
+
+
+    /* FOOD */
 
     if (select.value === "Food") {
 
         foodItems.forEach(function(item) {
 
-            const option = document.createElement("option");
+            const option =
+                document.createElement("option");
 
             option.value = item;
             option.textContent = item;
@@ -392,16 +458,25 @@ function updateItemOptions(select) {
 
         });
 
+        /* Food does not require size */
+
         sizeField.style.display = "none";
+
+        if (sizeSelect) {
+            sizeSelect.value = "";
+        }
 
     }
 
+
+    /* CLOTHES */
 
     else if (select.value === "Clothes") {
 
         clothesItems.forEach(function(item) {
 
-            const option = document.createElement("option");
+            const option =
+                document.createElement("option");
 
             option.value = item;
             option.textContent = item;
@@ -410,24 +485,64 @@ function updateItemOptions(select) {
 
         });
 
+        /* Clothes require size */
+
         sizeField.style.display = "block";
 
     }
 
 
+    /* ACCESSORIES */
+
+    else if (select.value === "Accessories") {
+
+        accessoryItems.forEach(function(item) {
+
+            const option =
+                document.createElement("option");
+
+            option.value = item;
+            option.textContent = item;
+
+            itemSelect.appendChild(option);
+
+        });
+
+        /* Accessories do not require clothing size */
+
+        sizeField.style.display = "none";
+
+        if (sizeSelect) {
+            sizeSelect.value = "";
+        }
+
+    }
+
+
+    /* NO CATEGORY */
+
     else {
 
-        sizeField.style.display = "block";
+        sizeField.style.display = "none";
+
+        if (sizeSelect) {
+            sizeSelect.value = "";
+        }
 
     }
 
 }
 
 
+/* =========================================================
+   ADD NEW DONATION ITEM
+   ========================================================= */
+
 function addDonationItem() {
 
     const container =
         document.getElementById("donationItems");
+
 
     const number =
         container.children.length + 1;
@@ -435,6 +550,7 @@ function addDonationItem() {
 
     const card =
         document.createElement("div");
+
 
     card.className =
         "donation-item-card";
@@ -461,6 +577,8 @@ function addDonationItem() {
 
         <div class="row g-3">
 
+            <!-- CATEGORY -->
+
             <div class="col-md-4">
 
                 <label>Category</label>
@@ -484,10 +602,16 @@ function addDonationItem() {
                         👕 Clothes
                     </option>
 
+                    <option value="Accessories">
+                        🎒 Accessories
+                    </option>
+
                 </select>
 
             </div>
 
+
+            <!-- ITEM -->
 
             <div class="col-md-4">
 
@@ -508,6 +632,8 @@ function addDonationItem() {
             </div>
 
 
+            <!-- QUANTITY -->
+
             <div class="col-md-4">
 
                 <label>Quantity</label>
@@ -517,13 +643,19 @@ function addDonationItem() {
                     min="1"
                     name="quantity[]"
                     class="form-control"
+                    placeholder="10"
                     required
                 >
 
             </div>
 
 
-            <div class="col-md-6 size-field">
+            <!-- SIZE -->
+
+            <div
+                class="col-md-6 size-field"
+                style="display: none;"
+            >
 
                 <label>Size</label>
 
@@ -536,16 +668,32 @@ function addDonationItem() {
                         Select size
                     </option>
 
-                    <option>Small</option>
-                    <option>Medium</option>
-                    <option>Large</option>
-                    <option>XL</option>
-                    <option>Mixed</option>
+                    <option value="Small">
+                        Small
+                    </option>
+
+                    <option value="Medium">
+                        Medium
+                    </option>
+
+                    <option value="Large">
+                        Large
+                    </option>
+
+                    <option value="XL">
+                        XL
+                    </option>
+
+                    <option value="Mixed">
+                        Mixed
+                    </option>
 
                 </select>
 
             </div>
 
+
+            <!-- CONDITION -->
 
             <div class="col-md-6">
 
@@ -561,9 +709,17 @@ function addDonationItem() {
                         Select condition
                     </option>
 
-                    <option>Fresh</option>
-                    <option>Good</option>
-                    <option>Packaged</option>
+                    <option value="Fresh">
+                        Fresh
+                    </option>
+
+                    <option value="Good">
+                        Good
+                    </option>
+
+                    <option value="Packaged">
+                        Packaged
+                    </option>
 
                 </select>
 
@@ -575,37 +731,58 @@ function addDonationItem() {
 
 
     container.appendChild(card);
+
 }
 
+
+/* =========================================================
+   REMOVE DONATION ITEM
+   ========================================================= */
 
 function removeDonationItem(button) {
 
     const container =
         document.getElementById("donationItems");
 
+
     if (container.children.length <= 1) {
 
-        alert("At least one donation item is required.");
+        alert(
+            "At least one donation item is required."
+        );
 
         return;
 
     }
 
-    button.closest(".donation-item-card").remove();
+
+    button
+        .closest(".donation-item-card")
+        .remove();
+
 
     updateItemNumbers();
+
 }
 
+
+/* =========================================================
+   UPDATE ITEM NUMBERS
+   ========================================================= */
 
 function updateItemNumbers() {
 
     const cards =
-        document.querySelectorAll(".donation-item-card");
+        document.querySelectorAll(
+            ".donation-item-card"
+        );
+
 
     cards.forEach(function(card, index) {
 
         const number =
             card.querySelector(".item-number");
+
 
         if (number) {
 
@@ -619,20 +796,30 @@ function updateItemNumbers() {
 }
 
 
+/* =========================================================
+   IMAGE PREVIEW
+   ========================================================= */
+
 function previewDonationImages(input) {
 
     const preview =
         document.getElementById("imagePreview");
 
+
     preview.innerHTML = "";
+
 
     const files =
         Array.from(input.files);
 
 
+    /* Maximum 5 images */
+
     if (files.length > 5) {
 
-        alert("You can upload a maximum of 5 images.");
+        alert(
+            "You can upload a maximum of 5 images."
+        );
 
         input.value = "";
 
@@ -653,11 +840,14 @@ function previewDonationImages(input) {
                 const img =
                     document.createElement("img");
 
+
                 img.src =
                     event.target.result;
 
+
                 img.className =
                     "donation-preview-image";
+
 
                 preview.appendChild(img);
 
@@ -669,6 +859,30 @@ function previewDonationImages(input) {
     });
 
 }
+
+
+/* =========================================================
+   INITIAL STATE
+   ========================================================= */
+
+document.addEventListener(
+    "DOMContentLoaded",
+    function() {
+
+        const firstCategory =
+            document.querySelector(
+                ".item-type"
+            );
+
+
+        if (firstCategory) {
+
+            updateItemOptions(firstCategory);
+
+        }
+
+    }
+);
 
 </script>
 

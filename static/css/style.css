@@ -772,20 +772,32 @@ textarea.form-control {
 }
 
 .food-request {
-    background: #0891b2;
+    background: linear-gradient(135deg, #159b7d, #0f7f68);
+    color: #fff;
 }
 
 .clothes-request {
-    background: #0f766e;
+    background: linear-gradient(135deg, #ea9a4b, #d97724);
+    color: #fff;
+}
+
+.accessories-request {
+    background: linear-gradient(135deg, #3b82f6, #2563eb);
+    color: #fff;
 }
 
 .food-request:hover {
-    background: #0e7490;
+    background: linear-gradient(135deg, #128b71, #0c705c);
     color: #fff;
 }
 
 .clothes-request:hover {
-    background: #115e59;
+    background: linear-gradient(135deg, #d98236, #c46418);
+    color: #fff;
+}
+
+.accessories-request:hover {
+    background: linear-gradient(135deg, #2563eb, #1d4ed8);
     color: #fff;
 }
 
@@ -2331,4 +2343,177 @@ textarea.form-control {
 
 .request-main-card > form > .request-section-card:first-child {
     border-top: 3px solid #dff5ed;
+}
+
+/* =========================================================
+   CONTACT PAGE - POLISHED CARD DESIGN
+========================================================= */
+
+.contact-section {
+    background:
+        radial-gradient(
+            circle at 10% 0%,
+            rgba(45, 212, 191, .08),
+            transparent 32%
+        ),
+        radial-gradient(
+            circle at 90% 10%,
+            rgba(56, 189, 248, .08),
+            transparent 30%
+        ),
+        #f7fbfa !important;
+}
+
+.contact-section .form-card {
+    height: 100%;
+    border-radius: 22px;
+    border: 1px solid #e0ece8;
+    box-shadow: 0 12px 35px rgba(15, 39, 64, .07);
+    padding: 32px;
+}
+
+.contact-section .form-card h2 {
+    font-size: 28px;
+    font-weight: 800;
+    color: var(--navy);
+}
+
+.contact-section .form-card p {
+    line-height: 1.7;
+}
+
+.contact-section .eyebrow {
+    color: #16866f;
+}
+
+.contact-section .contact-item {
+    padding: 13px 0;
+    margin-bottom: 8px;
+}
+
+.contact-section .contact-item > span {
+    width: 50px;
+    height: 50px;
+    flex: 0 0 50px;
+    border-radius: 14px;
+    background: #e7f8f2;
+    box-shadow: 0 4px 12px rgba(21, 155, 125, .08);
+}
+
+.contact-section .contact-item b {
+    display: block;
+    color: var(--navy);
+    margin-bottom: 2px;
+}
+
+.contact-section .contact-item p {
+    margin: 0;
+    color: var(--muted);
+    font-size: 14px;
+}
+
+.contact-section .bg-light {
+    background: #f0faf6 !important;
+    border: 1px solid #dcefe8;
+}
+
+.contact-section .form-control {
+    background: #fbfdfc;
+    border-color: #d9e7e2;
+    min-height: 52px;
+}
+
+.contact-section textarea.form-control {
+    min-height: 150px;
+    resize: vertical;
+}
+
+.contact-section .form-control:focus {
+    border-color: #48b89e;
+    box-shadow: 0 0 0 .2rem rgba(72, 184, 158, .13);
+    background: #fff;
+}
+
+.contact-section .form-button {
+    min-height: 55px;
+    border: 0;
+    border-radius: 13px;
+    background: linear-gradient(
+        135deg,
+        #159b7d,
+        #0f7f68
+    );
+    box-shadow: 0 9px 20px rgba(21, 155, 125, .18);
+}
+
+.contact-section .form-button:hover {
+    background: linear-gradient(
+        135deg,
+        #128b71,
+        #0c705c
+    );
+}
+
+
+/* =========================================================
+   ACCESSORIES
+========================================================= */
+
+.accessories-request {
+    background: linear-gradient(
+        135deg,
+        #3b82f6,
+        #2563eb
+    );
+}
+
+.accessories-request:hover {
+    background: linear-gradient(
+        135deg,
+        #2563eb,
+        #1d4ed8
+    );
+    color: #fff;
+}
+
+
+/* =========================================================
+   RESPONSIVE CONTACT
+========================================================= */
+
+@media (max-width: 991px) {
+
+    .contact-section .form-card {
+        height: auto;
+    }
+
+}
+
+@media (max-width: 600px) {
+
+    .contact-section {
+        padding-left: 12px !important;
+        padding-right: 12px !important;
+    }
+
+    .contact-section .form-card {
+        padding: 22px 18px;
+        border-radius: 18px;
+    }
+
+    .contact-section .form-card h2 {
+        font-size: 24px;
+    }
+
+    .contact-section .contact-item {
+        gap: 12px;
+    }
+
+    .contact-section .contact-item > span {
+        width: 44px;
+        height: 44px;
+        flex-basis: 44px;
+        font-size: 18px;
+    }
+
 }
