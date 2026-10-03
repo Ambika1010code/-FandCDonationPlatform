@@ -1,21 +1,29 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="F&C Food and Clothes Donation Platform">
+    <meta name="description" content="F&C Food, Clothes and Accessories Donation Platform">
 
     <title>{% block title %}F&C Donation Platform{% endblock %}</title>
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet"
+    >
 
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link
+        href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css"
+        rel="stylesheet"
+    >
 
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link
+        rel="stylesheet"
+        href="{{ url_for('static', filename='css/style.css') }}"
+    >
 </head>
 
 <body>
@@ -24,13 +32,20 @@
 
     <div class="container-fluid px-4 px-lg-5">
 
-        <a class="navbar-brand logo-wrap" href="{{ url_for('index') }}">
+        <!-- LOGO -->
+        <a
+            class="navbar-brand logo-wrap"
+            href="{{ url_for('index') }}"
+        >
             <span class="logo-box">♥</span>
+
             <span class="logo-text">
                 <span>F</span>&<span>C</span>
             </span>
         </a>
 
+
+        <!-- MOBILE MENU BUTTON -->
         <button
             class="navbar-toggler"
             type="button"
@@ -38,41 +53,51 @@
             data-bs-target="#mainNav"
             aria-controls="mainNav"
             aria-expanded="false"
-            aria-label="Toggle navigation">
-
+            aria-label="Toggle navigation"
+        >
             <span class="navbar-toggler-icon"></span>
-
         </button>
 
-        <div class="collapse navbar-collapse" id="mainNav">
+
+        <div
+            class="collapse navbar-collapse"
+            id="mainNav"
+        >
 
             <ul class="navbar-nav mx-auto align-items-xl-center gap-xl-1">
 
+                <!-- HOME -->
                 <li class="nav-item">
 
                     <a
                         class="nav-link {% if request.path == '/' %}active{% endif %}"
-                        href="{{ url_for('index') }}">
-
+                        href="{{ url_for('index') }}"
+                    >
                         Home
-
                     </a>
 
                 </li>
 
+
+                <!-- ABOUT -->
                 <li class="nav-item">
 
                     <a
                         class="nav-link {% if request.path == '/about' %}active{% endif %}"
-                        href="{{ url_for('about') }}">
-
+                        href="{{ url_for('about') }}"
+                    >
                         About
-
                     </a>
 
                 </li>
 
+
                 <li class="nav-separator">|</li>
+
+
+                <!-- ========================= -->
+                <!-- DONATION DROPDOWN -->
+                <!-- ========================= -->
 
                 <li class="nav-item dropdown">
 
@@ -83,36 +108,51 @@
                         id="donationDropdown"
                         role="button"
                         data-bs-toggle="dropdown"
-                        aria-expanded="false">
-
+                        aria-expanded="false"
+                    >
                         Donation
-
                     </a>
+
 
                     <ul
                         class="dropdown-menu"
-                        aria-labelledby="donationDropdown">
+                        aria-labelledby="donationDropdown"
+                    >
 
+                        <!-- FOOD -->
                         <li>
 
                             <a
                                 class="dropdown-item"
-                                href="{{ url_for('donate_food') }}">
-
+                                href="{{ url_for('donate_food') }}"
+                            >
                                 🍚 Food Donation
-
                             </a>
 
                         </li>
 
+
+                        <!-- CLOTHES -->
                         <li>
 
                             <a
                                 class="dropdown-item"
-                                href="{{ url_for('donate_clothes') }}">
-
+                                href="{{ url_for('donate_clothes') }}"
+                            >
                                 👕 Clothes Donation
+                            </a>
 
+                        </li>
+
+
+                        <!-- ACCESSORIES -->
+                        <li>
+
+                            <a
+                                class="dropdown-item"
+                                href="{{ url_for('donate_accessories') }}"
+                            >
+                                🎒 Accessories Donation
                             </a>
 
                         </li>
@@ -121,48 +161,96 @@
 
                 </li>
 
-                <li class="nav-item">
+
+                <!-- ========================= -->
+                <!-- REQUEST DROPDOWN -->
+                <!-- ========================= -->
+
+                <li class="nav-item dropdown">
 
                     <a
-                        class="nav-link
-                        {% if request.path == '/request/food' %}active{% endif %}"
-                        href="{{ url_for('request_food') }}">
-
-                        Request Food
-
+                        class="nav-link dropdown-toggle
+                        {% if request.path.startswith('/request') %}active{% endif %}"
+                        href="#"
+                        id="requestDropdown"
+                        role="button"
+                        data-bs-toggle="dropdown"
+                        aria-expanded="false"
+                    >
+                        Request
                     </a>
+
+
+                    <ul
+                        class="dropdown-menu"
+                        aria-labelledby="requestDropdown"
+                    >
+
+                        <!-- FOOD REQUEST -->
+                        <li>
+
+                            <a
+                                class="dropdown-item"
+                                href="{{ url_for('request_food') }}"
+                            >
+                                🍚 Request Food
+                            </a>
+
+                        </li>
+
+
+                        <!-- CLOTHES REQUEST -->
+                        <li>
+
+                            <a
+                                class="dropdown-item"
+                                href="{{ url_for('request_clothes') }}"
+                            >
+                                👕 Request Clothes
+                            </a>
+
+                        </li>
+
+
+                        <!-- ACCESSORIES REQUEST -->
+                        <li>
+
+                            <a
+                                class="dropdown-item"
+                                href="{{ url_for('request_accessories') }}"
+                            >
+                                🎒 Request Accessories
+                            </a>
+
+                        </li>
+
+                    </ul>
 
                 </li>
 
-                <li class="nav-item">
-
-                    <a
-                        class="nav-link
-                        {% if request.path == '/request/clothes' %}active{% endif %}"
-                        href="{{ url_for('request_clothes') }}">
-
-                        Request Clothes
-
-                    </a>
-
-                </li>
 
                 <li class="nav-separator">|</li>
 
+
+                <!-- CONTACT -->
                 <li class="nav-item">
 
                     <a
                         class="nav-link
                         {% if request.path == '/contact' %}active{% endif %}"
-                        href="{{ url_for('contact') }}">
-
+                        href="{{ url_for('contact') }}"
+                    >
                         Contact
-
                     </a>
 
                 </li>
 
             </ul>
+
+
+            <!-- ========================= -->
+            <!-- RIGHT SIDE NAVIGATION -->
+            <!-- ========================= -->
 
             <div class="d-flex gap-2 align-items-center nav-actions">
 
@@ -172,66 +260,67 @@
 
                         <a
                             class="btn btn-outline-primary nav-btn"
-                            href="{{ url_for('donor_dashboard') }}">
-
+                            href="{{ url_for('donor_dashboard') }}"
+                        >
                             Dashboard
-
                         </a>
 
                     {% elif current_role == 'receiver' %}
 
                         <a
                             class="btn btn-outline-primary nav-btn"
-                            href="{{ url_for('receiver_dashboard') }}">
-
+                            href="{{ url_for('receiver_dashboard') }}"
+                        >
                             Dashboard
-
                         </a>
 
                     {% else %}
 
                         <a
                             class="btn btn-outline-primary nav-btn"
-                            href="{{ url_for('admin_dashboard') }}">
-
+                            href="{{ url_for('admin_dashboard') }}"
+                        >
                             Admin
-
                         </a>
 
                     {% endif %}
 
+
+                    <!-- PROFILE -->
                     <a
                         class="btn btn-primary nav-btn"
-                        href="{{ url_for('profile') }}">
-
+                        href="{{ url_for('profile') }}"
+                    >
                         Profile
-
                     </a>
 
+
+                    <!-- LOGOUT -->
                     <a
                         class="btn btn-light nav-btn"
-                        href="{{ url_for('logout') }}">
-
+                        href="{{ url_for('logout') }}"
+                    >
                         Logout
-
                     </a>
+
 
                 {% else %}
 
+                    <!-- LOGIN -->
                     <a
                         class="btn btn-outline-primary nav-btn"
-                        href="{{ url_for('login') }}">
-
+                        href="{{ url_for('login') }}"
+                    >
                         Login
-
                     </a>
 
+
+                    <!-- REGISTER -->
                     <a
                         class="btn btn-primary nav-btn"
-                        href="{{ url_for('register') }}">
-
+                        href="{{ url_for('register') }}"
+                    >
                         Register
-
                     </a>
 
                 {% endif %}
@@ -244,6 +333,11 @@
 
 </nav>
 
+
+<!-- ========================= -->
+<!-- FLASH MESSAGES -->
+<!-- ========================= -->
+
 {% with messages = get_flashed_messages(with_categories=true) %}
 
     {% if messages %}
@@ -254,15 +348,16 @@
 
                 <div
                     class="alert alert-{{ category }} alert-dismissible fade show mt-3"
-                    role="alert">
+                    role="alert"
+                >
 
                     {{ message }}
 
                     <button
                         type="button"
                         class="btn-close"
-                        data-bs-dismiss="alert">
-                    </button>
+                        data-bs-dismiss="alert"
+                    ></button>
 
                 </div>
 
@@ -274,6 +369,11 @@
 
 {% endwith %}
 
+
+<!-- ========================= -->
+<!-- MAIN CONTENT -->
+<!-- ========================= -->
+
 <main>
 
     {% block content %}
@@ -282,17 +382,25 @@
 
 </main>
 
+
+<!-- ========================= -->
+<!-- FOOTER -->
+<!-- ========================= -->
+
 <footer class="site-footer">
 
     <div class="container-fluid px-4 px-lg-5 footer-main">
 
         <div class="row g-4">
 
+
+            <!-- ABOUT -->
             <div class="col-lg-3">
 
                 <a
                     class="footer-logo"
-                    href="{{ url_for('index') }}">
+                    href="{{ url_for('index') }}"
+                >
 
                     <span class="logo-box">♥</span>
 
@@ -302,10 +410,12 @@
 
                 </a>
 
+
                 <p>
                     Connecting people who can give with people who need
-                    support through food and clothing donations.
+                    support through food, clothes and useful accessories.
                 </p>
+
 
                 <div class="socials">
 
@@ -318,6 +428,8 @@
 
             </div>
 
+
+            <!-- QUICK LINKS -->
             <div class="col-lg-3">
 
                 <h5>Quick Links</h5>
@@ -344,36 +456,58 @@
 
             </div>
 
+
+            <!-- DONATE & REQUEST -->
             <div class="col-lg-3">
 
                 <h5>Donate & Request</h5>
 
+
+                <!-- DONATION -->
                 <strong class="footer-category">
                     Donation
                 </strong>
+
 
                 <a href="{{ url_for('donate_food') }}">
                     🍚 Food Donation
                 </a>
 
+
                 <a href="{{ url_for('donate_clothes') }}">
                     👕 Clothes Donation
                 </a>
 
+
+                <a href="{{ url_for('donate_accessories') }}">
+                    🎒 Accessories Donation
+                </a>
+
+
+                <!-- REQUEST -->
                 <strong class="footer-category">
                     Request
                 </strong>
 
+
                 <a href="{{ url_for('request_food') }}">
-                    Request Food
+                    🍚 Request Food
                 </a>
 
+
                 <a href="{{ url_for('request_clothes') }}">
-                    Request Clothes
+                    👕 Request Clothes
+                </a>
+
+
+                <a href="{{ url_for('request_accessories') }}">
+                    🎒 Request Accessories
                 </a>
 
             </div>
 
+
+            <!-- CONTACT -->
             <div class="col-lg-3">
 
                 <h5>Contact Us</h5>
@@ -400,6 +534,8 @@
 
     </div>
 
+
+    <!-- FOOTER BOTTOM -->
     <div class="footer-bottom px-4 px-lg-5">
 
         <span>
@@ -414,11 +550,16 @@
 
 </footer>
 
+
+<!-- BOOTSTRAP -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js">
 </script>
 
+
+<!-- CUSTOM JAVASCRIPT -->
 <script src="{{ url_for('static', filename='js/script.js') }}">
 </script>
+
 
 {% block scripts %}
 
@@ -426,4 +567,3 @@
 
 </body>
 </html>
-
