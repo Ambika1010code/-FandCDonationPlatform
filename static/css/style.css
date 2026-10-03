@@ -157,7 +157,6 @@ img {
 .home-hero {
     min-height: 545px;
 
-    /* SKY BLUE */
     background: linear-gradient(
         120deg,
         #38bdf8 0%,
@@ -265,26 +264,6 @@ img {
     align-items: center;
     justify-content: center;
     padding: 0;
-}
-
-.hero-image-wrap img {
-    display: block;
-
-    width: 100%;
-    max-width: 560px;
-
-    /* IMPORTANT:
-       Keep image height automatic so the collage
-       does not get cropped.
-    */
-    height: auto;
-    max-height: none;
-
-    object-fit: contain;
-
-    border-radius: 0;
-    box-shadow: none;
-    border: none;
 }
 
 
@@ -1349,12 +1328,6 @@ textarea.form-control {
         min-height: 72px;
     }
 
-    /*
-       Important:
-       Hero becomes vertical and image keeps its
-       original proportion.
-    */
-
     .home-hero {
         flex-direction: column;
         align-items: stretch;
@@ -1376,16 +1349,6 @@ textarea.form-control {
 
     .hero-image-wrap {
         justify-content: center;
-    }
-
-    .hero-image-wrap img {
-        width: 100%;
-        max-width: 600px;
-
-        /* DO NOT use height: 280px */
-        height: auto;
-
-        object-fit: contain;
     }
 
     .hero-small-stats {
@@ -1483,12 +1446,6 @@ textarea.form-control {
         font-size: 11px;
     }
 
-    .hero-image-wrap img {
-        width: 100%;
-        max-width: 100%;
-        height: auto;
-    }
-
     .impact-strip {
         grid-template-columns: 1fr 1fr;
         padding: 28px 8px;
@@ -1559,6 +1516,7 @@ textarea.form-control {
         flex-direction: column;
         align-items: flex-start;
     }
+
     .dashboard-head h1 {
         font-size: 28px;
     }
@@ -1577,9 +1535,10 @@ textarea.form-control {
     }
 }
 
+
 /* =========================================================
    HOME PAGE - FINAL HERO DESIGN
-   ========================================================= */
+========================================================= */
 
 .home-hero {
     background: linear-gradient(
@@ -1604,7 +1563,7 @@ textarea.form-control {
 
 /* =========================================================
    LEFT SIDE
-   ========================================================= */
+========================================================= */
 
 .home-hero .hero-left {
     width: 46% !important;
@@ -1617,7 +1576,7 @@ textarea.form-control {
 
 /* =========================================================
    RIGHT SIDE - IMAGE
-   ========================================================= */
+========================================================= */
 
 .home-hero .hero-image-wrap {
     width: 54% !important;
@@ -1634,153 +1593,61 @@ textarea.form-control {
     position: relative !important;
     z-index: 2 !important;
 }
+/* ===== HOME PAGE 4 IMAGES ===== */
+/* ===== HOME PAGE 4 IMAGES ===== */
 
+.five-home-images {
+    display: grid !important;
+    grid-template-columns: 210px 210px !important;
+    grid-template-rows: 145px 145px !important;
+    gap: 14px !important;
+    width: 434px !important;
+    max-width: 434px !important;
+    margin: 0 auto !important;
+    box-sizing: border-box !important;
+}
 
-/* =========================================================
-   COMPLETE COLLAGE IMAGE
-   ========================================================= */
-
-.home-hero .hero-image-wrap img {
+.five-home-images .home-image-card {
+    position: relative !important;
     display: block !important;
+    width: 210px !important;
+    height: 145px !important;
+    overflow: hidden !important;
+    border-radius: 22px !important;
+    box-sizing: border-box !important;
+    flex: none !important;
+}
 
+.five-home-images .home-image-card img {
+    display: block !important;
     width: 100% !important;
-
-    max-width: 745px !important;
-
-    height: auto !important;
-
-    max-height: none !important;
-
-    object-fit: contain !important;
-
+    height: 100% !important;
+    object-fit: cover !important;
     object-position: center !important;
-
+    max-width: none !important;
+    max-height: none !important;
     border: none !important;
-
-    border-radius: 0 !important;
-
+    border-radius: 22px !important;
     box-shadow: none !important;
-
-    margin: 0 !important;
 }
 
-
-/* =========================================================
-   BUTTONS
-   ========================================================= */
-
-.home-hero .btn {
-    position: relative;
-    z-index: 3;
+.five-home-images .home-image-card span {
+    position: absolute !important;
+    bottom: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    padding: 7px 5px !important;
+    background: rgba(0, 0, 0, 0.50) !important;
+    color: #ffffff !important;
+    text-align: center !important;
+    font-size: 13px !important;
+    font-weight: 600 !important;
+    box-sizing: border-box !important;
 }
 
-.home-hero .btn-primary {
-    background: #00d084 !important;
-    border-color: #00d084 !important;
-}
-
-.home-hero .btn-primary:hover {
-    background: #00b873 !important;
-    border-color: #00b873 !important;
-}
-
-.home-hero .btn-green {
-    background: #00d084 !important;
-    border-color: #00d084 !important;
-    color: #062e20 !important;
-}
-
-.home-hero .btn-green:hover {
-    background: #00b873 !important;
-    border-color: #00b873 !important;
-    color: #062e20 !important;
-}
-
-
-/* =========================================================
-   OUTLINE BUTTON
-   ========================================================= */
-
-.home-hero .hero-outline {
-    color: white !important;
-
-    background: transparent !important;
-
-    border: 1px solid rgba(255,255,255,0.55) !important;
-}
-
-.home-hero .hero-outline:hover {
-    color: #2563eb !important;
-
-    background: white !important;
-
-    border-color: white !important;
-}
-
-
-/* =========================================================
-   TABLET
-   ========================================================= */
-
-@media (max-width: 900px) {
-
-    .home-hero {
-        flex-direction: column !important;
-
-        min-height: auto !important;
-
-        padding: 50px 25px 55px !important;
-
-        gap: 35px !important;
-    }
-
-    .home-hero .hero-left {
-        width: 100% !important;
-
-        flex: none !important;
-    }
-
-    .home-hero .hero-image-wrap {
-        width: 100% !important;
-
-        flex: none !important;
-
-        overflow: visible !important;
-    }
-
-    .home-hero .hero-image-wrap img {
-        width: 100% !important;
-
-        max-width: 745px !important;
-
-        height: auto !important;
-
-        max-height: none !important;
-
-        object-fit: contain !important;
-    }
-}
-
-
-/* =========================================================
-   MOBILE
-   ========================================================= */
-
-@media (max-width: 600px) {
-
-    .home-hero {
-        padding: 40px 18px 45px !important;
-
-        gap: 30px !important;
-    }
-
-    .home-hero .hero-image-wrap img {
-        width: 100% !important;
-
-        max-width: 100% !important;
-
-        height: auto !important;
-    }
+.five-home-images .home-image-card:hover img {
+    transform: scale(1.03) !important;
+    transition: 0.3s ease !important;
 }
 /* =========================================================
    MULTIPLE DONATION ITEMS
@@ -1892,7 +1759,6 @@ textarea.form-control {
     font-size: 13px;
 }
 
-
 .report-category-card {
     display: flex;
     align-items: center;
@@ -1916,7 +1782,6 @@ textarea.form-control {
 .report-category-card small {
     color: var(--muted);
 }
-
 
 .admin-item-list {
     margin: 0;

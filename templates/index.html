@@ -1,84 +1,357 @@
 {% extends 'base.html' %}
+
 {% block title %}F&C | Food & Clothes Donation Platform{% endblock %}
+
 {% block content %}
 
 <section class="home-hero">
+
     <div class="hero-left">
-        <div <div class="eyebrow" style="color:#eaffff;margin-bottom:12px">
-    🌱 MAKING A DIFFERENCE TOGETHER
+
+        <div class="eyebrow" style="color:#eaffff;margin-bottom:12px">
+            🌱 MAKING A DIFFERENCE TOGETHER
         </div>
-        <div class="hero-kicker">Share Kindness,<br><span style="color:#d9fff8">Change Lives</span></div>
-        <p>Donate surplus food and useful clothes, or request support when you need it. F&C keeps the process simple from registration to delivery.</p>
+
+        <div class="hero-kicker">
+            Share Kindness,<br>
+            <span style="color:#d9fff8">Change Lives</span>
+        </div>
+
+        <p>
+            Donate surplus food and useful clothes, or request support when you need it.
+            F&C keeps the process simple from registration to delivery.
+        </p>
+
         <div class="hero-buttons">
-            <a href="{{ url_for('donate_food') }}" class="btn btn-green">Donate Now</a>
-            <a href="{{ url_for('request_food') }}" class="btn hero-outline">Request Help</a>
+
+            <a href="{{ url_for('donate_food') }}" class="btn btn-green">
+                Donate Now
+            </a>
+
+            <a href="{{ url_for('request_food') }}" class="btn hero-outline">
+                Request Help
+            </a>
+
         </div>
+
         <div class="hero-small-stats">
-            <div><strong>{{ platform_stats.meals }}+</strong><span>Food Units</span></div>
-            <div><strong>{{ platform_stats.clothes }}+</strong><span>Clothes Items</span></div>
-            <div><strong>{{ platform_stats.users }}+</strong><span>Community Users</span></div>
+
+            <div>
+                <strong>{{ platform_stats.meals }}+</strong>
+                <span>Food Units</span>
+            </div>
+
+            <div>
+                <strong>{{ platform_stats.clothes }}+</strong>
+                <span>Clothes Items</span>
+            </div>
+
+            <div>
+                <strong>{{ platform_stats.users }}+</strong>
+                <span>Community Users</span>
+            </div>
+
         </div>
+
     </div>
-    <div class="hero-image-wrap">
-       <img src="{{ url_for('static', filename='images/image.png') }}" alt="People taking part in donation activities">
+
+
+    <!-- HOME IMAGE CARDS -->
+    <div class="five-home-images">
+
+        <div class="home-image-card">
+            <img src="{{ url_for('static', filename='images/groceries.jpg') }}"
+                 alt="Fresh groceries available for donation">
+            <span>Groceries</span>
+        </div>
+
+        <div class="home-image-card">
+            <img src="{{ url_for('static', filename='images/clothes.png') }}"
+                 alt="Clothing items available for donation">
+            <span>Clothes</span>
+        </div>
+
+        <div class="home-image-card">
+            <img src="{{ url_for('static', filename='images/volunteer.jpeg') }}"
+                 alt="Volunteer helping with the donation platform">
+            <span>Volunteer</span>
+        </div>
+
+        <div class="home-image-card">
+            <img src="{{ url_for('static', filename='images/children.jpg') }}"
+                 alt="Children receiving donated support">
+            <span>Children</span>
+        </div>
+
+    </div>
+
 </section>
+
 
 <section class="impact-strip">
-    <div><span>🍱</span><strong>{{ platform_stats.meals }}</strong><small>Food units donated</small></div>
-    <div><span>👕</span><strong>{{ platform_stats.clothes }}</strong><small>Clothes donated</small></div>
-    <div><span>👥</span><strong>{{ platform_stats.users }}</strong><small>Registered users</small></div>
-    <div><span>⏳</span><strong>{{ platform_stats.pending }}</strong><small>Pending actions</small></div>
+
+    <div>
+        <span>🍱</span>
+        <strong>{{ platform_stats.meals }}</strong>
+        <small>Food units donated</small>
+    </div>
+
+    <div>
+        <span>👕</span>
+        <strong>{{ platform_stats.clothes }}</strong>
+        <small>Clothes donated</small>
+    </div>
+
+    <div>
+        <span>👥</span>
+        <strong>{{ platform_stats.users }}</strong>
+        <small>Registered users</small>
+    </div>
+
+    <div>
+        <span>⏳</span>
+        <strong>{{ platform_stats.pending }}</strong>
+        <small>Pending actions</small>
+    </div>
+
 </section>
+
 
 <section class="light-section service-section">
+
     <div class="section-heading">
-        <div class="eyebrow">WHY F&C</div>
+
+        <div class="eyebrow">
+            WHY F&C
+        </div>
+
         <h2>Making Giving Simple</h2>
+
     </div>
+
     <div class="row g-4 px-3 px-lg-4">
-        <div class="col-md-6 col-lg-3"><div class="info-card"><div class="card-icon">🎁</div><h4>Easy Donations</h4><p>Choose food or clothes and submit a clear donation form in a few minutes.</p></div></div>
-        <div class="col-md-6 col-lg-3"><div class="info-card"><div class="card-icon">🙏</div><h4>Simple Requests</h4><p>Recipients can explain what they need and track the request from their dashboard.</p></div></div>
-        <div class="col-md-6 col-lg-3"><div class="info-card"><div class="card-icon">📊</div><h4>Live Status</h4><p>Donation and request statuses are stored in MySQL and updated by the admin.</p></div></div>
-        <div class="col-md-6 col-lg-3"><div class="info-card"><div class="card-icon">🤝</div><h4>Community First</h4><p>A small, practical platform designed to connect donors and people who need help.</p></div></div>
+
+        <div class="col-md-6 col-lg-3">
+
+            <div class="info-card">
+
+                <div class="card-icon">🎁</div>
+
+                <h4>Easy Donations</h4>
+
+                <p>
+                    Choose food or clothes and submit a clear donation form in a few minutes.
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <div class="col-md-6 col-lg-3">
+
+            <div class="info-card">
+
+                <div class="card-icon">🙏</div>
+
+                <h4>Simple Requests</h4>
+
+                <p>
+                    Recipients can explain what they need and track the request from their dashboard.
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <div class="col-md-6 col-lg-3">
+
+            <div class="info-card">
+
+                <div class="card-icon">📊</div>
+
+                <h4>Live Status</h4>
+
+                <p>
+                    Donation and request statuses are stored in MySQL and updated by the admin.
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <div class="col-md-6 col-lg-3">
+
+            <div class="info-card">
+
+                <div class="card-icon">🤝</div>
+
+                <h4>Community First</h4>
+
+                <p>
+                    A small, practical platform designed to connect donors and people who need help.
+                </p>
+
+            </div>
+
+        </div>
+
     </div>
+
 </section>
+
 
 <section class="process-section">
-    <div class="section-heading"><div class="eyebrow">SIMPLE PROCESS</div><h2>How It Works</h2></div>
-    <div class="process-line">
-        <div class="process-step"><span class="step-box blue">01</span><h4>Register</h4><p>Create an account as a donor or recipient.</p></div>
-        <div class="process-step"><span class="step-box green">02</span><h4>Donate or Request</h4><p>Submit the item, quantity and location details.</p></div>
-        <div class="process-step"><span class="step-box blue">03</span><h4>Admin Review</h4><p>The admin checks records and updates their status.</p></div>
-        <div class="process-step"><span class="step-box green">04</span><h4>Complete</h4><p>Collection or delivery can be recorded as completed.</p></div>
+
+    <div class="section-heading">
+
+        <div class="eyebrow">
+            SIMPLE PROCESS
+        </div>
+
+        <h2>How It Works</h2>
+
     </div>
+
+
+    <div class="process-line">
+
+        <div class="process-step">
+
+            <span class="step-box blue">
+                01
+            </span>
+
+            <h4>Register</h4>
+
+            <p>
+                Create an account as a donor or recipient.
+            </p>
+
+        </div>
+
+
+        <div class="process-step">
+
+            <span class="step-box green">
+                02
+            </span>
+
+            <h4>Donate or Request</h4>
+
+            <p>
+                Submit the item, quantity and location details.
+            </p>
+
+        </div>
+
+
+        <div class="process-step">
+
+            <span class="step-box blue">
+                03
+            </span>
+
+            <h4>Admin Review</h4>
+
+            <p>
+                The admin checks records and updates their status.
+            </p>
+
+        </div>
+
+
+        <div class="process-step">
+
+            <span class="step-box green">
+                04
+            </span>
+
+            <h4>Complete</h4>
+
+            <p>
+                Collection or delivery can be recorded as completed.
+            </p>
+
+        </div>
+
+    </div>
+
 </section>
 
+
 <section class="category-section light-section">
-    <div class="section-heading"><div class="eyebrow">BROWSE</div><h2>Donation Categories</h2></div>
+
+    <div class="section-heading">
+
+        <div class="eyebrow">
+            BROWSE
+        </div>
+
+        <h2>Donation Categories</h2>
+
+    </div>
+
+
     <div class="row g-4 px-3 px-lg-4">
+
         {% set categories = [
             ('fresh-meals.jpg','Fresh Meals','Food'),
             ('groceries.jpg','Groceries','Food'),
-            ('winter-clothes.jpg','Winter Clothes','Clothes'),
-            ('childrens-wear.jpg',"Children's Wear",'Clothes')
+            ('winters.jpeg','Winter Clothes','Clothes'),
+            ('childrens-wear.jpg',"Children's Clothes",'Clothes')
         ] %}
+
+
         {% for image, name, tag in categories %}
+
         <div class="col-sm-6 col-lg-3">
+
             <div class="category-card">
-                <img src="{{ url_for('static', filename='images/' + image) }}" alt="{{ name }}">
+
+                <img src="{{ url_for('static', filename='images/' + image) }}"
+                     alt="{{ name }}">
+
                 <div class="category-name">
-                    <strong>{{ name }}</strong>
-                    <span class="tag {{ 'tag-green' if tag == 'Food' else 'tag-blue' }}">{{ tag }}</span>
+
+                    <strong>
+                        {{ name }}
+                    </strong>
+
+                    <span class="tag {{ 'tag-green' if tag == 'Food' else 'tag-blue' }}">
+                        {{ tag }}
+                    </span>
+
                 </div>
+
             </div>
+
         </div>
+
         {% endfor %}
+
     </div>
+
 </section>
 
+
 <section class="join-section">
-    <h2>Small Actions Can Make a Big Difference</h2>
-    <p>Register today and use the platform to donate useful items or request support from your community.</p>
-    <a href="{{ url_for('register') }}" class="btn btn-green">Create an Account</a>
+
+    <h2>
+        Small Actions Can Make a Big Difference
+    </h2>
+
+    <p>
+        Register today and use the platform to donate useful items or request
+        support from your community.
+    </p>
+
+    <a href="{{ url_for('register') }}" class="btn btn-green">
+        Create an Account
+    </a>
+
 </section>
+
 {% endblock %}
