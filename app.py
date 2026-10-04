@@ -62,13 +62,12 @@ DONATION_CATEGORIES = {
 
     "Accessories": [
         "Bags",
+        "Belts",
+        "Caps",
+        "Scarves",
+        "Gloves",
         "School Bags",
-        "Books",
-        "Stationery",
-        "Blankets",
-        "Kitchen Items",
-        "Household Items",
-        "Shoes",
+        "Wallets",
         "Other Accessories"
     ]
 }
@@ -78,9 +77,8 @@ VALID_DONATION_TYPES = set(DONATION_CATEGORIES.keys())
 STATUS_OPTIONS = [
     "Pending",
     "Approved",
-    "Collected",
-    "Delivered",
-    "Rejected"
+    "Rejected",
+    "Completed"
 ]
 
 
@@ -196,7 +194,10 @@ def dashboard_for(role):
     if role == "receiver":
         return "receiver_dashboard"
 
-    return "admin_dashboard"
+    if role == "admin":
+        return "admin_dashboard"
+
+    return "index"
 
 
 # =========================================================
@@ -209,7 +210,6 @@ def common_data():
     stats = {
         "meals": 0,
         "clothes": 0,
-        "accessories": 0,
         "users": 0,
         "pending": 0,
     }
@@ -233,14 +233,6 @@ def common_data():
         )
 
         stats["clothes"] = cursor.fetchone()["total"]
-
-        # Accessories
-        cursor.execute(
-            "SELECT COALESCE(SUM(quantity), 0) AS total "
-            "FROM donations WHERE donation_type='Accessories'"
-        )
-
-        stats["accessories"] = cursor.fetchone()["total"]
 
         # Users
         cursor.execute(
@@ -412,6 +404,7 @@ def login():
 
             session["user_id"] = user["id"]
             session["name"] = user["name"]
+            session["email"] = user["email"]
             session["role"] = user["role"]
 
             flash(
@@ -779,36 +772,21 @@ def donate():
             for item in items
         }
 
-        if len(donation_types) == 1:
+        # The database accepts one donation type per record.
+        # Keep one category per donation submission.
+        if len(donation_types) != 1:
 
-            donation_type = list(
-                donation_types
-            )[0]
+            flash(
+                "Please submit Food, Clothes and Accessories as separate donations.",
+                "danger"
+            )
 
-        elif donation_types == {
-            "Food",
-            "Clothes"
-        }:
+            if images:
+                delete_uploaded_images(json.dumps(images))
 
-            donation_type = "Food & Clothes"
+            return redirect(url_for("donate"))
 
-        elif donation_types == {
-            "Food",
-            "Accessories"
-        }:
-
-            donation_type = "Food & Accessories"
-
-        elif donation_types == {
-            "Clothes",
-            "Accessories"
-        }:
-
-            donation_type = "Clothes & Accessories"
-
-        else:
-
-            donation_type = "Food, Clothes & Accessories"
+        donation_type = next(iter(donation_types))
 
         first_item = items[0]
 
@@ -1260,10 +1238,6 @@ def request_clothes():
     )
 
 
-# =========================================================
-# ACCESSORIES REQUEST
-# =========================================================
-
 @app.route("/request/accessories", methods=["GET", "POST"])
 def request_accessories():
 
@@ -1278,111 +1252,62 @@ def request_accessories():
 
     if request.method == "POST":
 
-        item_name = request.form.get(
-            "item_name",
-            ""
-        ).strip()
-
-        quantity_text = request.form.get(
-            "quantity",
-            ""
-        ).strip()
-
-        reason = request.form.get(
-            "reason",
-            ""
-        ).strip()
-
-        address = request.form.get(
-            "address",
-            ""
-        ).strip()
-
-        description = request.form.get(
-            "description",
-            ""
-        ).strip()
-
-        contact_phone = request.form.get(
-            "phone",
-            ""
-        ).strip()
+        item_name = request.form.get("item_name", "").strip()
+        quantity_text = request.form.get("quantity", "").strip()
+        reason = request.form.get("reason", "").strip()
+        address = request.form.get("address", "").strip()
+        description = request.form.get("description", "").strip()
+        contact_phone = request.form.get("phone", "").strip()
+        people_count_text = request.form.get("people_count", "").strip()
+        needed_by = parse_datetime(request.form.get("needed_by", "").strip())
 
         try:
             quantity = int(quantity_text)
-
         except ValueError:
             quantity = 0
 
-        if (
-            not item_name
-            or quantity <= 0
-            or not reason
-            or not address
-        ):
+        try:
+            people_count = int(people_count_text) if people_count_text else None
+            if people_count is not None and people_count <= 0:
+                people_count = None
+        except ValueError:
+            people_count = None
 
+        if not item_name or quantity <= 0 or not reason or not address:
             flash(
                 "Please complete all required fields with a valid quantity.",
                 "danger"
             )
-
-            return redirect(
-                url_for("request_accessories")
-            )
+            return redirect(url_for("request_accessories"))
 
         db = cursor = None
 
         try:
-
             db = get_db_connection()
             cursor = db.cursor()
-
             cursor.execute(
                 """
                 INSERT INTO donation_requests
                 (
-                    user_id,
-                    request_type,
-                    item_name,
-                    quantity,
-                    reason,
-                    address,
-                    contact_phone,
-                    description,
-                    status
+                    user_id, request_type, item_name, quantity, reason,
+                    address, contact_phone, people_count, needed_by,
+                    description, status
                 )
                 VALUES
-                (
-                    %s, 'Accessories', %s, %s, %s,
-                    %s, %s, %s, 'Pending'
-                )
+                (%s, 'Accessories', %s, %s, %s, %s, %s, %s, %s, %s, 'Pending')
                 """,
                 (
-                    session["user_id"],
-                    item_name,
-                    quantity,
-                    reason,
-                    address,
-                    contact_phone,
-                    description,
+                    session["user_id"], item_name, quantity, reason, address,
+                    contact_phone, people_count, needed_by, description,
                 ),
             )
-
             db.commit()
-
-            flash(
-                "Accessories request submitted successfully.",
-                "success"
-            )
-
-            return redirect(
-                url_for("history")
-            )
+            flash("Accessories request submitted successfully.", "success")
+            return redirect(url_for("history"))
 
         except mysql.connector.Error:
-
             flash(
-                "Could not save the accessories request. Please try again.",
+                "Could not save the request. Please try again.",
                 "danger"
             )
 
@@ -1614,7 +1539,7 @@ def donor_dashboard():
             """
             SELECT
                 COUNT(*) AS total,
-                COALESCE(SUM(status='Delivered'), 0) AS delivered,
+                COALESCE(SUM(status='Completed'), 0) AS delivered,
                 COALESCE(SUM(status='Pending'), 0) AS pending
             FROM donations
             WHERE user_id=%s
@@ -1848,10 +1773,163 @@ def admin_dashboard():
         donations_count=donations_count,
         requests_count=requests_count,
         messages_count=messages_count,
+        total_users=users_count,
+        total_donations=donations_count,
+        total_requests=requests_count,
+        total_messages=messages_count,
+        pending_donations=sum(1 for d in donations if d.get("status") == "Pending"),
+        pending_requests=sum(1 for r in requests_list if r.get("status") == "Pending"),
         users=users,
         donations=donations,
         requests_list=requests_list,
+        requests=requests_list,
         messages=messages,
+        status_options=STATUS_OPTIONS,
+    )
+
+
+# =========================================================
+# ADMIN REPORTS
+# =========================================================
+
+@app.route("/admin/reports")
+def admin_reports():
+
+    if not role_required("admin"):
+
+        flash(
+            "Admin access required.",
+            "warning"
+        )
+
+        return redirect(url_for("login"))
+
+    report = {
+        "total_users": 0,
+        "total_donations": 0,
+        "total_requests": 0,
+        "total_quantity": 0,
+        "pending": 0,
+        "approved": 0,
+        "completed": 0,
+        "rejected": 0,
+        "food_donations": 0,
+        "clothes_donations": 0,
+    }
+
+    tracking = []
+    db = cursor = None
+
+    try:
+        db = get_db_connection()
+        cursor = db.cursor(dictionary=True)
+
+        cursor.execute(
+            "SELECT COUNT(*) AS total FROM users "
+            "WHERE role IN ('donor','receiver')"
+        )
+        report["total_users"] = cursor.fetchone()["total"]
+
+        cursor.execute(
+            "SELECT COUNT(*) AS total, "
+            "COALESCE(SUM(quantity), 0) AS quantity "
+            "FROM donations"
+        )
+        row = cursor.fetchone()
+        report["total_donations"] = row["total"]
+        report["total_quantity"] = row["quantity"]
+
+        cursor.execute(
+            "SELECT COUNT(*) AS total FROM donation_requests"
+        )
+        report["total_requests"] = cursor.fetchone()["total"]
+
+        cursor.execute(
+            "SELECT status, COUNT(*) AS total "
+            "FROM donations GROUP BY status"
+        )
+        for row in cursor.fetchall():
+            status = row["status"]
+            if status == "Pending":
+                report["pending"] += row["total"]
+            elif status == "Approved":
+                report["approved"] += row["total"]
+            elif status == "Completed":
+                report["completed"] += row["total"]
+            elif status == "Rejected":
+                report["rejected"] += row["total"]
+
+        cursor.execute(
+            "SELECT status, COUNT(*) AS total "
+            "FROM donation_requests GROUP BY status"
+        )
+        for row in cursor.fetchall():
+            status = row["status"]
+            if status == "Pending":
+                report["pending"] += row["total"]
+            elif status == "Approved":
+                report["approved"] += row["total"]
+            elif status == "Completed":
+                report["completed"] += row["total"]
+            elif status == "Rejected":
+                report["rejected"] += row["total"]
+
+        cursor.execute(
+            "SELECT COUNT(*) AS total FROM donations "
+            "WHERE donation_type='Food'"
+        )
+        report["food_donations"] = cursor.fetchone()["total"]
+
+        cursor.execute(
+            "SELECT COUNT(*) AS total FROM donations "
+            "WHERE donation_type='Clothes'"
+        )
+        report["clothes_donations"] = cursor.fetchone()["total"]
+
+        cursor.execute(
+            "SELECT 'Donation' AS record_type, "
+            "users.name AS person_name, "
+            "donations.donation_type AS category, "
+            "donations.item_name, donations.quantity, "
+            "donations.status, donations.created_at "
+            "FROM donations JOIN users ON donations.user_id=users.id "
+            "ORDER BY donations.created_at DESC LIMIT 50"
+        )
+        donation_tracking = cursor.fetchall()
+
+        cursor.execute(
+            "SELECT 'Request' AS record_type, "
+            "users.name AS person_name, "
+            "donation_requests.request_type AS category, "
+            "donation_requests.item_name, donation_requests.quantity, "
+            "donation_requests.status, donation_requests.created_at "
+            "FROM donation_requests "
+            "JOIN users ON donation_requests.user_id=users.id "
+            "ORDER BY donation_requests.created_at DESC LIMIT 50"
+        )
+        request_tracking = cursor.fetchall()
+
+        tracking = donation_tracking + request_tracking
+        tracking.sort(
+            key=lambda item: item["created_at"],
+            reverse=True
+        )
+        tracking = tracking[:50]
+
+    except mysql.connector.Error:
+
+        flash(
+            "Could not generate admin report.",
+            "danger"
+        )
+
+    finally:
+        close_db(cursor, db)
+
+    return render_template(
+        "admin_reports.html",
+        report=report,
+        tracking=tracking,
     )
 
 
@@ -1863,7 +1941,7 @@ def admin_dashboard():
     "/admin/status/donation/<int:donation_id>",
     methods=["POST"]
 )
-def update_donation_status(donation_id):
+def admin_update_donation_status(donation_id):
 
     if not role_required("admin"):
 
@@ -1935,7 +2013,7 @@ def update_donation_status(donation_id):
     "/admin/status/request/<int:request_id>",
     methods=["POST"]
 )
-def update_request_status(request_id):
+def admin_update_request_status(request_id):
 
     if not role_required("admin"):
 
@@ -2011,7 +2089,7 @@ def update_request_status(request_id):
     "/admin/delete/user/<int:user_id>",
     methods=["POST"]
 )
-def delete_user(user_id):
+def admin_delete_user(user_id):
 
     if not role_required("admin"):
 
@@ -2078,7 +2156,7 @@ def delete_user(user_id):
     "/admin/delete/donation/<int:donation_id>",
     methods=["POST"]
 )
-def delete_donation(donation_id):
+def admin_delete_donation(donation_id):
 
     if not role_required("admin"):
 
@@ -2131,7 +2209,7 @@ def delete_donation(donation_id):
     "/admin/delete/request/<int:request_id>",
     methods=["POST"]
 )
-def delete_request(request_id):
+def admin_delete_request(request_id):
 
     if not role_required("admin"):
 
@@ -2187,7 +2265,7 @@ def delete_request(request_id):
     "/admin/delete/message/<int:message_id>",
     methods=["POST"]
 )
-def delete_message(message_id):
+def admin_delete_message(message_id):
 
     if not role_required("admin"):
 

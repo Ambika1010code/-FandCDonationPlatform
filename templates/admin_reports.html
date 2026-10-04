@@ -10,11 +10,10 @@ Admin Reports | F&C
 
 <div class="container-fluid px-4 px-lg-5 py-5">
 
-
+    <!-- HEADER -->
     <div class="dashboard-head">
 
         <div>
-
             <div class="eyebrow">
                 ADMIN REPORT
             </div>
@@ -27,9 +26,7 @@ Admin Reports | F&C
                 Monitor donation activity, request activity
                 and current status.
             </p>
-
         </div>
-
 
         <a
             href="{{ url_for('admin_dashboard') }}"
@@ -41,83 +38,116 @@ Admin Reports | F&C
     </div>
 
 
-    <!-- SUMMARY -->
-
+    <!-- SUMMARY CARDS -->
     <div class="row g-3 mb-5">
 
-
+        <!-- TOTAL USERS -->
         <div class="col-sm-6 col-xl-3">
 
-            <div class="dash-stat">
+            <a
+                href="{{ url_for('admin_dashboard') }}"
+                class="report-card-link"
+            >
 
-                <span>👥</span>
+                <div class="dash-stat clickable-card">
 
-                <strong>
-                    {{ report.total_users }}
-                </strong>
+                    <span>👥</span>
 
-                <small>
-                    Total Users
-                </small>
+                    <strong>
+                        {{ report.total_users }}
+                    </strong>
 
-            </div>
+                    <small>
+                        Total Users
+                    </small>
+
+                </div>
+
+            </a>
 
         </div>
 
 
+        <!-- DONATION RECORDS -->
         <div class="col-sm-6 col-xl-3">
 
-            <div class="dash-stat">
+            <a
+                href="#tracking"
+                class="report-card-link"
+                onclick="filterRecords('donation')"
+            >
 
-                <span>📦</span>
+                <div class="dash-stat clickable-card">
 
-                <strong>
-                    {{ report.total_donations }}
-                </strong>
+                    <span>📦</span>
 
-                <small>
-                    Donation Records
-                </small>
+                    <strong>
+                        {{ report.total_donations }}
+                    </strong>
 
-            </div>
+                    <small>
+                        Donation Records
+                    </small>
+
+                </div>
+
+            </a>
 
         </div>
 
 
+        <!-- REQUEST RECORDS -->
         <div class="col-sm-6 col-xl-3">
 
-            <div class="dash-stat">
+            <a
+                href="#tracking"
+                class="report-card-link"
+                onclick="filterRecords('request')"
+            >
 
-                <span>🙏</span>
+                <div class="dash-stat clickable-card">
 
-                <strong>
-                    {{ report.total_requests }}
-                </strong>
+                    <span>🙏</span>
 
-                <small>
-                    Request Records
-                </small>
+                    <strong>
+                        {{ report.total_requests }}
+                    </strong>
 
-            </div>
+                    <small>
+                        Request Records
+                    </small>
+
+                </div>
+
+            </a>
 
         </div>
 
 
+        <!-- TOTAL QUANTITY -->
         <div class="col-sm-6 col-xl-3">
 
-            <div class="dash-stat">
+            <a
+                href="#tracking"
+                class="report-card-link"
+                onclick="filterRecords('donation')"
+            >
 
-                <span>📊</span>
+                <div class="dash-stat clickable-card">
 
-                <strong>
-                    {{ report.total_quantity }}
-                </strong>
+                    <span>📊</span>
 
-                <small>
-                    Total Donated Quantity
-                </small>
+                    <strong>
+                        {{ report.total_quantity }}
+                    </strong>
 
-            </div>
+                    <small>
+                        Total Donated Quantity
+                    </small>
+
+                </div>
+
+            </a>
 
         </div>
 
@@ -125,7 +155,6 @@ Admin Reports | F&C
 
 
     <!-- STATUS -->
-
     <div class="form-card mb-4">
 
         <h3>
@@ -134,71 +163,102 @@ Admin Reports | F&C
 
         <div class="row g-3 mt-2">
 
-
             <div class="col-md-3">
 
-                <div class="report-status-card">
+                <a
+                    href="#tracking"
+                    class="report-card-link"
+                    onclick="filterRecords('Pending')"
+                >
 
-                    <strong>
-                        {{ report.pending }}
-                    </strong>
+                    <div class="report-status-card clickable-card">
 
-                    <span>
-                        Pending
-                    </span>
+                        <strong>
+                            {{ report.pending }}
+                        </strong>
 
-                </div>
+                        <span>
+                            Pending
+                        </span>
+
+                    </div>
+
+                </a>
 
             </div>
 
 
             <div class="col-md-3">
 
-                <div class="report-status-card">
+                <a
+                    href="#tracking"
+                    class="report-card-link"
+                    onclick="filterRecords('Approved')"
+                >
 
-                    <strong>
-                        {{ report.approved }}
-                    </strong>
+                    <div class="report-status-card clickable-card">
 
-                    <span>
-                        Approved
-                    </span>
+                        <strong>
+                            {{ report.approved }}
+                        </strong>
 
-                </div>
+                        <span>
+                            Approved
+                        </span>
 
-            </div>
+                    </div>
 
-
-            <div class="col-md-3">
-
-                <div class="report-status-card">
-
-                    <strong>
-                        {{ report.collected }}
-                    </strong>
-
-                    <span>
-                        Collected
-                    </span>
-
-                </div>
+                </a>
 
             </div>
 
 
             <div class="col-md-3">
 
-                <div class="report-status-card">
+                <a
+                    href="#tracking"
+                    class="report-card-link"
+                    onclick="filterRecords('Completed')"
+                >
 
-                    <strong>
-                        {{ report.delivered }}
-                    </strong>
+                    <div class="report-status-card clickable-card">
 
-                    <span>
-                        Delivered
-                    </span>
+                        <strong>
+                            {{ report.completed }}
+                        </strong>
 
-                </div>
+                        <span>
+                            Completed
+                        </span>
+
+                    </div>
+
+                </a>
+
+            </div>
+
+
+            <div class="col-md-3">
+
+                <a
+                    href="#tracking"
+                    class="report-card-link"
+                    onclick="filterRecords('Rejected')"
+                >
+
+                    <div class="report-status-card clickable-card">
+
+                        <strong>
+                            {{ report.rejected }}
+                        </strong>
+
+                        <span>
+                            Rejected
+                        </span>
+
+                    </div>
+
+                </a>
 
             </div>
 
@@ -208,7 +268,6 @@ Admin Reports | F&C
 
 
     <!-- CATEGORY -->
-
     <div class="form-card mb-4">
 
         <h3>
@@ -218,52 +277,104 @@ Admin Reports | F&C
         <div class="row g-3 mt-2">
 
 
-            <div class="col-md-6">
+            <!-- FOOD -->
+            <div class="col-md-4">
 
-                <div class="report-category-card">
+                <a
+                    href="#tracking"
+                    class="report-card-link"
+                    onclick="filterRecords('Food')"
+                >
 
-                    <span>
-                        🍱
-                    </span>
+                    <div class="report-category-card clickable-card">
 
-                    <div>
+                        <span>
+                            🍱
+                        </span>
 
-                        <strong>
-                            {{ report.food_donations }}
-                        </strong>
+                        <div>
 
-                        <small>
-                            Food Donation Records
-                        </small>
+                            <strong>
+                                {{ report.food_donations|default(0) }}
+                            </strong>
+
+                            <small>
+                                Food Donation Records
+                            </small>
+
+                        </div>
 
                     </div>
 
-                </div>
+                </a>
 
             </div>
 
 
-            <div class="col-md-6">
+            <!-- CLOTHES -->
+            <div class="col-md-4">
 
-                <div class="report-category-card">
+                <a
+                    href="#tracking"
+                    class="report-card-link"
+                    onclick="filterRecords('Clothes')"
+                >
 
-                    <span>
-                        👕
-                    </span>
+                    <div class="report-category-card clickable-card">
 
-                    <div>
+                        <span>
+                            👕
+                        </span>
 
-                        <strong>
-                            {{ report.clothes_donations }}
-                        </strong>
+                        <div>
 
-                        <small>
-                            Clothing Donation Records
-                        </small>
+                            <strong>
+                                {{ report.clothes_donations|default(0) }}
+                            </strong>
+
+                            <small>
+                                Clothes Donation Records
+                            </small>
+
+                        </div>
 
                     </div>
 
-                </div>
+                </a>
+
+            </div>
+
+
+            <!-- ACCESSORIES -->
+            <div class="col-md-4">
+
+                <a
+                    href="#tracking"
+                    class="report-card-link"
+                    onclick="filterRecords('Accessories')"
+                >
+
+                    <div class="report-category-card clickable-card">
+
+                        <span>
+                            🎒
+                        </span>
+
+                        <div>
+
+                            <strong>
+                                {{ report.accessories_donations|default(0) }}
+                            </strong>
+
+                            <small>
+                                Accessories Donation Records
+                            </small>
+
+                        </div>
+
+                    </div>
+
+                </a>
 
             </div>
 
@@ -272,9 +383,73 @@ Admin Reports | F&C
     </div>
 
 
-    <!-- TRACKING -->
+    <!-- FILTER BUTTONS -->
+    <div class="form-card mb-4">
 
-    <div class="form-card admin-table">
+        <h3>
+            Filter Records
+        </h3>
+
+        <div class="d-flex flex-wrap gap-2 mt-3">
+
+            <button
+                type="button"
+                class="btn btn-primary filter-btn active"
+                onclick="filterRecords('all')"
+            >
+                All
+            </button>
+
+            <button
+                type="button"
+                class="btn btn-outline-primary filter-btn"
+                onclick="filterRecords('donation')"
+            >
+                Donations
+            </button>
+
+            <button
+                type="button"
+                class="btn btn-outline-primary filter-btn"
+                onclick="filterRecords('request')"
+            >
+                Requests
+            </button>
+
+            <button
+                type="button"
+                class="btn btn-outline-primary filter-btn"
+                onclick="filterRecords('Food')"
+            >
+                Food
+            </button>
+
+            <button
+                type="button"
+                class="btn btn-outline-primary filter-btn"
+                onclick="filterRecords('Clothes')"
+            >
+                Clothes
+            </button>
+
+            <button
+                type="button"
+                class="btn btn-outline-primary filter-btn"
+                onclick="filterRecords('Accessories')"
+            >
+                Accessories
+            </button>
+
+        </div>
+
+    </div>
+
+
+    <!-- TRACKING -->
+    <div
+        class="form-card admin-table"
+        id="tracking"
+    >
 
         <div class="d-flex justify-content-between align-items-center">
 
@@ -310,11 +485,16 @@ Admin Reports | F&C
                 </thead>
 
 
-                <tbody>
+                <tbody id="trackingBody">
 
                 {% for row in tracking %}
 
-                    <tr>
+                    <tr
+                        class="tracking-row"
+                        data-type="{{ row.record_type|lower }}"
+                        data-category="{{ row.category }}"
+                        data-status="{{ row.status }}"
+                    >
 
                         <td>
                             <span class="tag tag-blue">
@@ -375,9 +555,134 @@ Admin Reports | F&C
 
     </div>
 
-
 </div>
 
 </section>
+
+
+<style>
+
+.report-card-link {
+    text-decoration: none;
+    color: inherit;
+    display: block;
+}
+
+.clickable-card {
+    cursor: pointer;
+    transition: 0.2s ease;
+}
+
+.clickable-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+}
+
+.report-card-link:hover {
+    text-decoration: none;
+    color: inherit;
+}
+
+</style>
+
+
+<script>
+
+function filterRecords(filter) {
+
+    const rows = document.querySelectorAll(".tracking-row");
+
+    const buttons = document.querySelectorAll(".filter-btn");
+
+    buttons.forEach(function(button) {
+
+        button.classList.remove("active");
+
+    });
+
+
+    rows.forEach(function(row) {
+
+        const type = row.dataset.type;
+        const category = row.dataset.category;
+        const status = row.dataset.status;
+
+        let show = false;
+
+
+        if (filter === "all") {
+
+            show = true;
+
+        }
+
+        else if (filter === "donation") {
+
+            show = type === "donation";
+
+        }
+
+        else if (filter === "request") {
+
+            show = type === "request";
+
+        }
+
+        else if (
+            filter === "Food" ||
+            filter === "Clothes" ||
+            filter === "Accessories"
+        ) {
+
+            show = category === filter;
+
+        }
+
+        else if (
+            filter === "Pending" ||
+            filter === "Approved" ||
+            filter === "Completed" ||
+            filter === "Rejected"
+        ) {
+
+            show = status === filter;
+
+        }
+
+
+        row.style.display = show ? "" : "none";
+
+    });
+
+
+    const clickedButton = Array.from(buttons).find(function(button) {
+
+        return button.textContent.trim() === filter;
+
+    });
+
+
+    if (clickedButton) {
+
+        clickedButton.classList.add("active");
+
+    }
+
+
+    const tracking = document.getElementById("tracking");
+
+    if (tracking) {
+
+        tracking.scrollIntoView({
+            behavior: "smooth",
+            block: "start"
+        });
+
+    }
+
+}
+
+</script>
+
 
 {% endblock %}
