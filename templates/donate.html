@@ -15,7 +15,6 @@
     </p>
 </section>
 
-
 <section class="form-area">
 
     <div class="form-card wide-form">
@@ -33,7 +32,6 @@
 
         </div>
 
-
         <form
             method="POST"
             action="{{ url_for('donate') }}"
@@ -46,60 +44,44 @@
             <div class="row g-3">
 
                 <div class="col-md-6">
-
                     <label>Your Name</label>
-
                     <input
                         class="form-control"
                         value="{{ current_user or '' }}"
                         disabled
                     >
-
                 </div>
 
-
                 <div class="col-md-6">
-
                     <label>Phone Number</label>
-
                     <input
                         type="tel"
                         name="phone"
                         class="form-control"
                         placeholder="+977 98XXXXXXXX"
                     >
-
                 </div>
 
-
                 <div class="col-12">
-
                     <label>Pickup Address</label>
-
                     <input
                         name="pickup_location"
                         class="form-control"
                         placeholder="Bharatpur, Chitwan"
                         required
                     >
-
                 </div>
 
-
                 <div class="col-md-6">
-
                     <label>Available Date & Time</label>
-
                     <input
                         type="datetime-local"
                         name="available_date"
                         class="form-control"
                     >
-
                 </div>
 
             </div>
-
 
             <!-- ITEMS -->
 
@@ -108,15 +90,11 @@
                 <div class="d-flex justify-content-between align-items-center mb-3 gap-3 flex-wrap">
 
                     <div>
-
                         <h3 class="mb-1">Donation Items</h3>
-
                         <p class="text-secondary mb-0">
                             Add one or more food, clothing or accessory items.
                         </p>
-
                     </div>
-
 
                     <button
                         type="button"
@@ -128,7 +106,6 @@
 
                 </div>
 
-
                 <div id="donationItems">
 
                     <!-- FIRST ITEM -->
@@ -136,13 +113,10 @@
                     <div class="donation-item-card">
 
                         <div class="d-flex justify-content-between align-items-center mb-3">
-
                             <div class="item-number">
                                 Item 1
                             </div>
-
                         </div>
-
 
                         <div class="row g-3">
 
@@ -179,7 +153,6 @@
 
                             </div>
 
-
                             <!-- ITEM -->
 
                             <div class="col-md-4">
@@ -200,7 +173,6 @@
 
                             </div>
 
-
                             <!-- QUANTITY -->
 
                             <div class="col-md-4">
@@ -217,7 +189,6 @@
                                 >
 
                             </div>
-
 
                             <!-- SIZE -->
 
@@ -258,7 +229,6 @@
 
                             </div>
 
-
                             <!-- CONDITION -->
 
                             <div class="col-md-6">
@@ -267,24 +237,12 @@
 
                                 <select
                                     name="condition[]"
-                                    class="form-select"
+                                    class="form-select condition-select"
                                     required
                                 >
 
                                     <option value="">
                                         Select condition
-                                    </option>
-
-                                    <option value="Fresh">
-                                        Fresh
-                                    </option>
-
-                                    <option value="Good">
-                                        Good
-                                    </option>
-
-                                    <option value="Packaged">
-                                        Packaged
                                     </option>
 
                                 </select>
@@ -298,7 +256,6 @@
                 </div>
 
             </div>
-
 
             <!-- IMAGES -->
 
@@ -325,14 +282,12 @@
                     Upload up to 5 clear images of the donated items.
                 </small>
 
-
                 <div
                     id="imagePreview"
                     class="image-preview-grid mt-3"
                 ></div>
 
             </div>
-
 
             <!-- DESCRIPTION -->
 
@@ -348,7 +303,6 @@
                 ></textarea>
 
             </div>
-
 
             <!-- SUBMIT -->
 
@@ -366,7 +320,6 @@
 </section>
 
 {% endblock %}
-
 
 {% block scripts %}
 
@@ -388,7 +341,6 @@ const foodItems = [
     "Other Food"
 ];
 
-
 const clothesItems = [
     "T-Shirts",
     "Shirts",
@@ -403,7 +355,6 @@ const clothesItems = [
     "Other Clothes"
 ];
 
-
 const accessoryItems = [
     "Bags",
     "School Bags",
@@ -416,6 +367,27 @@ const accessoryItems = [
     "Other Accessories"
 ];
 
+/* =========================================================
+   CONDITION OPTIONS
+   ========================================================= */
+
+const foodConditions = [
+    "Fresh",
+    "Good",
+    "Packaged"
+];
+
+const clothesConditions = [
+    "New",
+    "Used",
+    "clean"
+];
+
+const accessoryConditions = [
+    "New",
+    "Used",
+    "clean"
+];
 
 /* =========================================================
    UPDATE ITEM OPTIONS
@@ -435,12 +407,18 @@ function updateItemOptions(select) {
     const sizeSelect =
         card.querySelector('select[name="size[]"]');
 
+    const conditionSelect =
+        card.querySelector(".condition-select");
 
     /* Clear old item options */
 
     itemSelect.innerHTML =
         '<option value="">Select item</option>';
 
+    /* Clear old condition options */
+
+    conditionSelect.innerHTML =
+        '<option value="">Select condition</option>';
 
     /* FOOD */
 
@@ -458,6 +436,20 @@ function updateItemOptions(select) {
 
         });
 
+        /* Food conditions */
+
+        foodConditions.forEach(function(condition) {
+
+            const option =
+                document.createElement("option");
+
+            option.value = condition;
+            option.textContent = condition;
+
+            conditionSelect.appendChild(option);
+
+        });
+
         /* Food does not require size */
 
         sizeField.style.display = "none";
@@ -467,7 +459,6 @@ function updateItemOptions(select) {
         }
 
     }
-
 
     /* CLOTHES */
 
@@ -485,12 +476,25 @@ function updateItemOptions(select) {
 
         });
 
+        /* Clothes conditions */
+
+        clothesConditions.forEach(function(condition) {
+
+            const option =
+                document.createElement("option");
+
+            option.value = condition;
+            option.textContent = condition;
+
+            conditionSelect.appendChild(option);
+
+        });
+
         /* Clothes require size */
 
         sizeField.style.display = "block";
 
     }
-
 
     /* ACCESSORIES */
 
@@ -508,6 +512,20 @@ function updateItemOptions(select) {
 
         });
 
+        /* Accessories conditions */
+
+        accessoryConditions.forEach(function(condition) {
+
+            const option =
+                document.createElement("option");
+
+            option.value = condition;
+            option.textContent = condition;
+
+            conditionSelect.appendChild(option);
+
+        });
+
         /* Accessories do not require clothing size */
 
         sizeField.style.display = "none";
@@ -517,7 +535,6 @@ function updateItemOptions(select) {
         }
 
     }
-
 
     /* NO CATEGORY */
 
@@ -533,7 +550,6 @@ function updateItemOptions(select) {
 
 }
 
-
 /* =========================================================
    ADD NEW DONATION ITEM
    ========================================================= */
@@ -543,18 +559,14 @@ function addDonationItem() {
     const container =
         document.getElementById("donationItems");
 
-
     const number =
         container.children.length + 1;
-
 
     const card =
         document.createElement("div");
 
-
     card.className =
         "donation-item-card";
-
 
     card.innerHTML = `
 
@@ -573,7 +585,6 @@ function addDonationItem() {
             </button>
 
         </div>
-
 
         <div class="row g-3">
 
@@ -610,7 +621,6 @@ function addDonationItem() {
 
             </div>
 
-
             <!-- ITEM -->
 
             <div class="col-md-4">
@@ -631,7 +641,6 @@ function addDonationItem() {
 
             </div>
 
-
             <!-- QUANTITY -->
 
             <div class="col-md-4">
@@ -648,7 +657,6 @@ function addDonationItem() {
                 >
 
             </div>
-
 
             <!-- SIZE -->
 
@@ -692,7 +700,6 @@ function addDonationItem() {
 
             </div>
 
-
             <!-- CONDITION -->
 
             <div class="col-md-6">
@@ -701,24 +708,12 @@ function addDonationItem() {
 
                 <select
                     name="condition[]"
-                    class="form-select"
+                    class="form-select condition-select"
                     required
                 >
 
                     <option value="">
                         Select condition
-                    </option>
-
-                    <option value="Fresh">
-                        Fresh
-                    </option>
-
-                    <option value="Good">
-                        Good
-                    </option>
-
-                    <option value="Packaged">
-                        Packaged
                     </option>
 
                 </select>
@@ -729,11 +724,9 @@ function addDonationItem() {
 
     `;
 
-
     container.appendChild(card);
 
 }
-
 
 /* =========================================================
    REMOVE DONATION ITEM
@@ -744,7 +737,6 @@ function removeDonationItem(button) {
     const container =
         document.getElementById("donationItems");
 
-
     if (container.children.length <= 1) {
 
         alert(
@@ -752,19 +744,14 @@ function removeDonationItem(button) {
         );
 
         return;
-
     }
-
 
     button
         .closest(".donation-item-card")
         .remove();
 
-
     updateItemNumbers();
-
 }
-
 
 /* =========================================================
    UPDATE ITEM NUMBERS
@@ -777,12 +764,10 @@ function updateItemNumbers() {
             ".donation-item-card"
         );
 
-
     cards.forEach(function(card, index) {
 
         const number =
             card.querySelector(".item-number");
-
 
         if (number) {
 
@@ -795,7 +780,6 @@ function updateItemNumbers() {
 
 }
 
-
 /* =========================================================
    IMAGE PREVIEW
    ========================================================= */
@@ -805,13 +789,10 @@ function previewDonationImages(input) {
     const preview =
         document.getElementById("imagePreview");
 
-
     preview.innerHTML = "";
-
 
     const files =
         Array.from(input.files);
-
 
     /* Maximum 5 images */
 
@@ -827,12 +808,10 @@ function previewDonationImages(input) {
 
     }
 
-
     files.forEach(function(file) {
 
         const reader =
             new FileReader();
-
 
         reader.onload =
             function(event) {
@@ -840,26 +819,21 @@ function previewDonationImages(input) {
                 const img =
                     document.createElement("img");
 
-
                 img.src =
                     event.target.result;
-
 
                 img.className =
                     "donation-preview-image";
 
-
                 preview.appendChild(img);
 
             };
-
 
         reader.readAsDataURL(file);
 
     });
 
 }
-
 
 /* =========================================================
    INITIAL STATE
@@ -873,7 +847,6 @@ document.addEventListener(
             document.querySelector(
                 ".item-type"
             );
-
 
         if (firstCategory) {
 
