@@ -21,61 +21,6 @@
 
         <form method="POST" id="registerForm">
 
-            <h3>Choose your account type</h3>
-
-            <div class="register-roles">
-
-                
-                <label class="register-role selected">
-                    <input type="radio"
-                           name="role"
-                           value="donor"
-                           checked>
-
-                    <span class="big-emoji">🎁</span>
-                    <b>Donor</b>
-                    <small>Donate food and clothes.</small>
-                </label>
-
-
-                <!-- RECIPIENT -->
-                <label class="register-role">
-                    <input type="radio"
-                           name="role"
-                           value="receiver">
-
-                    <span class="big-emoji">🙏</span>
-                    <b>Recipient</b>
-                    <small>Request food and clothes.</small>
-                </label>
-
-
-                <!-- NGO -->
-                <label class="register-role">
-                    <input type="radio"
-                           name="role"
-                           value="ngo">
-
-                    <span class="big-emoji">🏢</span>
-                    <b>NGO</b>
-                    <small>Manage and support donation activities.</small>
-                </label>
-
-
-                <!-- VOLUNTEER -->
-                <label class="register-role">
-                    <input type="radio"
-                           name="role"
-                           value="volunteer">
-
-                    <span class="big-emoji">🤝</span>
-                    <b>Volunteer</b>
-                    <small>Help with food and clothes donation activities.</small>
-                </label>
-
-            </div>
-
-
             <!-- REGISTRATION FIELDS -->
 
             <div class="register-fields">
@@ -164,39 +109,5 @@
     </div>
 
 </section>
-
-
-<!-- ROLE SELECTION SCRIPT -->
-
-<script>
-document.addEventListener("DOMContentLoaded", function () {
-
-    const roleCards = document.querySelectorAll(".register-role");
-
-    roleCards.forEach(function (card) {
-
-        card.addEventListener("click", function () {
-
-            // Remove selected from all cards
-            roleCards.forEach(function (item) {
-                item.classList.remove("selected");
-            });
-
-            // Select clicked card
-            card.classList.add("selected");
-
-            // Select radio button
-            const radio = card.querySelector('input[type="radio"]');
-
-            if (radio) {
-                radio.checked = true;
-            }
-
-        });
-
-    });
-
-});
-</script>
 
 {% endblock %}

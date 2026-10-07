@@ -174,7 +174,13 @@ def logged_in():
 
 
 def role_required(role):
-    return logged_in() and session.get("role") == role
+    if not logged_in():
+        return False
+
+    if role in {"donor", "receiver"}:
+        return session.get("role") in {"donor", "receiver"}
+
+    return session.get("role") == role
 
 
 def parse_datetime(value):
@@ -188,17 +194,13 @@ def parse_datetime(value):
 
 
 def dashboard_for(role):
-    if role == "donor":
+    if role in {"donor", "receiver"}:
         return "donor_dashboard"
-
-    if role == "receiver":
-        return "receiver_dashboard"
 
     if role == "admin":
         return "admin_dashboard"
 
     return "index"
-
 
 # =========================================================
 # COMMON DATA
@@ -352,8 +354,7 @@ def login():
 
         email = request.form.get("email", "").strip().lower()
         password = request.form.get("password", "")
-        selected_role = request.form.get("role", "").strip()
-
+        
         if not email or not password:
             flash(
                 "Please enter your email and password.",
@@ -390,15 +391,6 @@ def login():
             user["password"],
             password
         ):
-
-            if selected_role and selected_role != user["role"]:
-
-                flash(
-                    "The selected account type does not match this account.",
-                    "warning"
-                )
-
-                return redirect(url_for("login"))
 
             session.clear()
 
@@ -507,7 +499,7 @@ def register():
                     name,
                     email,
                     generate_password_hash(password),
-                    role,
+                    "donor",
                     phone,
                     address,
                 ),
@@ -569,10 +561,10 @@ def donate_food():
 @app.route("/donate/clothes")
 def donate_clothes():
 
-    if not role_required("donor"):
+    if not logged_in():
 
         flash(
-            "Please log in as a donor.",
+            "Please log in to donate.",
             "warning"
         )
 
@@ -587,15 +579,14 @@ def donate_clothes():
 @app.route("/donate/accessories")
 def donate_accessories():
 
-    if not role_required("donor"):
+    if not logged_in():
 
         flash(
-            "Please log in as a donor.",
+            "Please log in to donate.",
             "warning"
         )
 
         return redirect(url_for("login"))
-
     return render_template(
         "donate.html",
         donation_type="Accessories"
@@ -605,10 +596,10 @@ def donate_accessories():
 @app.route("/donate", methods=["GET", "POST"])
 def donate():
 
-    if not role_required("donor"):
+    if not logged_in():
 
         flash(
-            "Please log in as a donor to donate.",
+            "Please log in to donate.",
             "warning"
         )
 
@@ -919,10 +910,10 @@ def donate():
 @app.route("/request")
 def request_help():
 
-    if not role_required("receiver"):
+    if not logged_in():
 
         flash(
-            "Please log in as a recipient to request help.",
+            "Please log in to request help.",
             "warning"
         )
 
@@ -938,10 +929,10 @@ def request_help():
 @app.route("/request/food", methods=["GET", "POST"])
 def request_food():
 
-    if not role_required("receiver"):
+    if not logged_in():
 
         flash(
-            "Please log in as a recipient.",
+            "Please log in to request help.",
             "warning"
         )
 
@@ -1102,14 +1093,21 @@ def request_food():
 @app.route("/request/clothes", methods=["GET", "POST"])
 def request_clothes():
 
-    if not role_required("receiver"):
+    if not logged_in():
 
-        flash(
+     flash(
+        "Please log in to request help.",
+        "warning"
+     )
+
+    return redirect(url_for("login"))
+
+    flash(
             "Please log in as a recipient.",
             "warning"
         )
 
-        return redirect(url_for("login"))
+    return redirect(url_for("login"))
 
     if request.method == "POST":
 
@@ -1465,31 +1463,30 @@ def history():
         if session["role"] == "donor":
 
             cursor.execute(
-                """
-                SELECT *
-                FROM donations
-                WHERE user_id=%s
-                ORDER BY created_at DESC
-                """,
-                (session["user_id"],),
+            """
+            SELECT *
+            FROM donations
+            WHERE user_id=%s
+            ORDER BY created_at DESC
+            """,
+            (session["user_id"],),
             )
 
             donations = cursor.fetchall()
 
-        elif session["role"] == "receiver":
 
             cursor.execute(
-                """
-                SELECT *
-                FROM donation_requests
-                WHERE user_id=%s
-                ORDER BY created_at DESC
-                """,
-                (session["user_id"],),
+            """
+            SELECT *
+            FROM donation_requests
+            WHERE user_id=%s
+            ORDER BY created_at DESC
+            """,
+            (session["user_id"],),
             )
 
             requests_list = cursor.fetchall()
-
+    
     except mysql.connector.Error:
 
         flash(
