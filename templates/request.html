@@ -7,10 +7,6 @@
 
 {% block content %}
 
-<!-- =========================
-     REQUEST HERO
-========================= -->
-
 <section class="action-hero
     {% if is_clothes %}
         purple-gradient
@@ -24,11 +20,11 @@
     <div class="action-icon">
 
         {% if is_clothes %}
-            👕
+        👕
         {% elif is_accessories %}
-            🎒
+        🎒
         {% else %}
-            🍱
+        🍱
         {% endif %}
 
     </div>
@@ -39,29 +35,136 @@
 
         {% if is_clothes %}
 
-            Tell us what clothing you need.
-            Your request will be reviewed by the admin.
+        Tell us what clothing you need.
+        Your request will be reviewed by the admin.
 
         {% elif is_accessories %}
 
-            Tell us what useful accessories you need.
-            Your request will be reviewed by the admin.
+        Tell us what useful accessories you need.
+        Your request will be reviewed by the admin.
 
         {% else %}
 
-            Tell us what food support you need.
-            Your request will be reviewed by the admin.
+        Tell us what food support you need.
+        Your request will be reviewed by the admin.
 
         {% endif %}
 
     </p>
 
 </section>
+{% if available_donations %}
+<section class="form-area">
+    <div class="form-card wide-form">
 
+        <div class="mb-4">
+            <div class="eyebrow">AVAILABLE DONATIONS</div>
 
-<!-- =========================
-     REQUEST FORM
-========================= -->
+            <h2 class="mb-2">
+                {{ request_type }} Items Available
+            </h2>
+
+            <p class="text-muted mb-0">
+                Browse approved donation items and choose one that matches
+                your need. Your request will still be reviewed by the admin.
+            </p>
+        </div>
+
+        <div class="row g-4">
+
+            {% for donation in available_donations %}
+
+            <div class="col-md-6 col-lg-4">
+
+                <div class="card h-100 shadow-sm border-0">
+
+                    {% if donation.image_list %}
+
+                    <img src="{{ url_for(
+                                'static',
+                                filename='uploads/' ~ donation.image_list[0]
+                            ) }}" class="card-img-top" alt="{{ donation.item_name }}" style="
+                                height:220px;
+                                object-fit:cover;
+                            ">
+
+                    {% else %}
+
+                    <div class="d-flex align-items-center justify-content-center bg-light" style="height:220px;">
+                        <span class="text-muted">
+                            No image available
+                        </span>
+                    </div>
+
+                    {% endif %}
+
+                    <div class="card-body">
+
+                        <span class="badge bg-success mb-2">
+                            Approved Donation
+                        </span>
+
+                        <h4 class="card-title">
+                            {{ donation.item_name }}
+                        </h4>
+
+                        <p class="mb-2">
+                            <strong>Type:</strong>
+                            {{ donation.donation_type }}
+                        </p>
+
+                        <p class="mb-2">
+                            <strong>Available Quantity:</strong>
+                            {{ donation.quantity }}
+                        </p>
+
+                        {% if donation.size %}
+                        <p class="mb-2">
+                            <strong>Size:</strong>
+                            {{ donation.size }}
+                        </p>
+                        {% endif %}
+
+                        {% if donation.condition %}
+                        <p class="mb-2">
+                            <strong>Condition:</strong>
+                            {{ donation.condition }}
+                        </p>
+                        {% endif %}
+
+                        {% if donation.description %}
+                        <p class="text-muted small">
+                            {{ donation.description }}
+                        </p>
+                        {% endif %}
+
+                        {% if donation.pickup_location %}
+                        <p class="small mb-3">
+                            <strong>Pickup:</strong>
+                            {{ donation.pickup_location }}
+                        </p>
+                        {% endif %}
+
+                        <button type="button" class="btn btn-primary w-100"
+                            data-item-name="{{ donation.item_name|default('', true)|e }}"
+                            data-size="{{ donation.size|default('', true)|e }}"
+                            data-condition="{{ donation.condition|default('', true)|e }}"
+                            data-description="{{ donation.description|default('', true)|e }}"
+                            onclick="selectDonation(this)">
+                            Request This Item
+                        </button>
+                    </div>
+                </div>
+
+            </div>
+
+            {% endfor %}
+
+        </div>
+
+    </div>
+</section>
+{% endif %}
 
 <section class="form-area">
 
@@ -93,10 +196,7 @@
 
         <!-- FORM -->
 
-        <form
-            method="POST"
-            id="requestForm"
-        >
+        <form method="POST" id="requestForm">
 
             <div class="row g-3">
 
@@ -109,11 +209,7 @@
                         Full Name
                     </label>
 
-                    <input
-                        class="form-control"
-                        value="{{ current_user or '' }}"
-                        disabled
-                    >
+                    <input class="form-control" value="{{ current_user or '' }}" disabled>
 
                 </div>
 
@@ -126,12 +222,7 @@
                         Phone Number
                     </label>
 
-                    <input
-                        type="tel"
-                        name="phone"
-                        class="form-control"
-                        placeholder="+977 98XXXXXXXX"
-                    >
+                    <input type="tel" name="phone" class="form-control" placeholder="+977 98XXXXXXXX">
 
                 </div>
 
@@ -144,12 +235,8 @@
                         Delivery Address
                     </label>
 
-                    <input
-                        name="address"
-                        class="form-control"
-                        placeholder="Home, shelter or community address"
-                        required
-                    >
+                    <input name="address" class="form-control" placeholder="Home, shelter or community address"
+                        required>
 
                 </div>
 
@@ -166,11 +253,7 @@
                         Clothes Needed
                     </label>
 
-                    <select
-                        name="item_name"
-                        class="form-select"
-                        required
-                    >
+                    <select name="item_name" class="form-select" required>
 
                         <option value="">
                             Select clothing
@@ -233,11 +316,7 @@
                         Size
                     </label>
 
-                    <select
-                        name="size"
-                        class="form-select"
-                        required
-                    >
+                    <select name="size" class="form-select" required>
 
                         <option value="">
                             Select size
@@ -280,11 +359,7 @@
                         Accessory Needed
                     </label>
 
-                    <select
-                        name="item_name"
-                        class="form-select"
-                        required
-                    >
+                    <select name="item_name" class="form-select" required>
 
                         <option value="">
                             Select accessory
@@ -339,10 +414,7 @@
                         Preferred Condition
                     </label>
 
-                    <select
-                        name="condition"
-                        class="form-select"
-                    >
+                    <select name="condition" class="form-select">
 
                         <option value="">
                             Any condition
@@ -377,11 +449,7 @@
                         Food Needed
                     </label>
 
-                    <select
-                        name="item_name"
-                        class="form-select"
-                        required
-                    >
+                    <select name="item_name" class="form-select" required>
 
                         <option value="">
                             Select food
@@ -436,13 +504,7 @@
                         Number of People
                     </label>
 
-                    <input
-                        type="number"
-                        name="people_count"
-                        min="1"
-                        class="form-control"
-                        placeholder="5"
-                    >
+                    <input type="number" name="people_count" min="1" class="form-control" placeholder="5">
 
                 </div>
 
@@ -459,14 +521,7 @@
                         Quantity
                     </label>
 
-                    <input
-                        type="number"
-                        name="quantity"
-                        min="1"
-                        class="form-control"
-                        placeholder="10"
-                        required
-                    >
+                    <input type="number" name="quantity" min="1" class="form-control" placeholder="10" required>
 
                 </div>
 
@@ -481,11 +536,7 @@
                         Needed By
                     </label>
 
-                    <input
-                        type="datetime-local"
-                        name="needed_by"
-                        class="form-control"
-                    >
+                    <input type="datetime-local" name="needed_by" class="form-control">
 
                 </div>
 
@@ -500,12 +551,8 @@
                         Reason for Request
                     </label>
 
-                    <input
-                        name="reason"
-                        class="form-control"
-                        placeholder="Family, community or emergency need"
-                        required
-                    >
+                    <input name="reason" class="form-control" placeholder="Family, community or emergency need"
+                        required>
 
                 </div>
 
@@ -520,12 +567,8 @@
                         Description
                     </label>
 
-                    <textarea
-                        name="description"
-                        class="form-control"
-                        rows="4"
-                        placeholder="Any specific needs, restrictions or useful information..."
-                    ></textarea>
+                    <textarea name="description" class="form-control" rows="4"
+                        placeholder="Any specific needs, restrictions or useful information..."></textarea>
 
                 </div>
 
@@ -536,9 +579,7 @@
 
                 <div class="col-12">
 
-                    <button
-                        type="submit"
-                        class="btn request-button
+                    <button type="submit" class="btn request-button
                         {% if is_clothes %}
                             clothes-request
                         {% elif is_accessories %}
@@ -546,17 +587,16 @@
                         {% else %}
                             food-request
                         {% endif %}
-                        w-100 form-button"
-                    >
+                        w-100 form-button">
 
                         {% if is_clothes %}
-                            👕 Submit Clothes Request
+                        👕 Submit Clothes Request
 
                         {% elif is_accessories %}
-                            🎒 Submit Accessories Request
+                        🎒 Submit Accessories Request
 
                         {% else %}
-                            🍱 Submit Food Request
+                        🍱 Submit Food Request
 
                         {% endif %}
 
@@ -571,5 +611,83 @@
     </div>
 
 </section>
+<script>
+    function setSelectValue(select, value) {
+
+        if (!select || !value) {
+            return;
+        }
+
+        let option = Array.from(select.options).find(
+            option => option.value === value
+        );
+
+        if (!option) {
+            option = new Option(value, value);
+            select.add(option);
+        }
+
+        select.value = value;
+    }
+    function selectDonation(button) {
+
+        const itemName = button.dataset.itemName || "";
+        const size = button.dataset.size || "";
+        const condition = button.dataset.condition || "";
+        const description = button.dataset.description || "";
+
+
+        const itemSelect =
+            document.querySelector('[name="item_name"]');
+
+        setSelectValue(itemSelect, itemName);
+
+
+        const sizeSelect =
+            document.querySelector('[name="size"]');
+
+        if (sizeSelect && size) {
+            setSelectValue(sizeSelect, size);
+        }
+
+
+        const conditionSelect =
+            document.querySelector('[name="condition"]');
+
+        if (conditionSelect && condition) {
+            setSelectValue(conditionSelect, condition);
+        }
+
+
+        const descriptionInput =
+            document.querySelector('[name="description"]');
+
+        if (descriptionInput && description) {
+            descriptionInput.value = description;
+        }
+
+
+        const quantityInput =
+            document.querySelector('[name="quantity"]');
+
+        if (quantityInput) {
+            quantityInput.value = 1;
+        }
+
+
+        const requestForm =
+            document.getElementById("requestForm");
+
+        if (requestForm) {
+
+            requestForm.scrollIntoView({
+                behavior: "smooth",
+                block: "start"
+            });
+
+        }
+
+    }
+</script>
 
 {% endblock %}

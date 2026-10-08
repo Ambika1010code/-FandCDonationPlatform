@@ -888,11 +888,60 @@ def donate():
             "Food"
         )
     )
+def get_available_donations(request_type):
+    db = cursor = None
 
+    try:
+        db = get_db_connection()
+        cursor = db.cursor(dictionary=True)
 
-# =========================================================
-# REQUEST ROUTES
-# =========================================================
+        cursor.execute(
+            """
+            SELECT
+                id,
+                donation_type,
+                item_name,
+                quantity,
+                size,
+                items_json,
+                image_paths,
+                description,
+                `condition`,
+                pickup_location,
+                available_date
+            FROM donations
+            WHERE status = 'Approved'
+              AND donation_type = %s
+            ORDER BY id DESC
+            """,
+            (request_type,)
+        )
+
+        donations = cursor.fetchall()
+
+        for donation in donations:
+
+            try:
+                donation["image_list"] = json.loads(
+                    donation.get("image_paths") or "[]"
+                )
+            except (TypeError, ValueError):
+                donation["image_list"] = []
+
+            try:
+                donation["item_list"] = json.loads(
+                    donation.get("items_json") or "[]"
+                )
+            except (TypeError, ValueError):
+                donation["item_list"] = []
+
+        return donations
+
+    except mysql.connector.Error:
+        return []
+
+    finally:
+        close_db(cursor, db)
 
 @app.route("/request")
 def request_help():
@@ -924,6 +973,8 @@ def request_food():
         )
 
         return redirect(url_for("login"))
+
+    available_donations = get_available_donations("Food")
 
     if request.method == "POST":
 
@@ -1071,34 +1122,31 @@ def request_food():
         finally:
             close_db(cursor, db)
 
+        available_donations = get_available_donations("Food")
+
     return render_template(
         "request.html",
-        request_type="Food"
+        request_type="Food",
+        available_donations=available_donations
     )
-
 
 @app.route("/request/clothes", methods=["GET", "POST"])
 def request_clothes():
 
-    if not logged_in():
+        if not logged_in():
 
-     flash(
-        "Please log in to request help.",
-        "warning"
-     )
-
-    return redirect(url_for("login"))
-
-    flash(
-            "Please log in as a recipient.",
+         flash(
+            "Please log in to request help.",
             "warning"
         )
 
-    return redirect(url_for("login"))
+        return redirect(url_for("login"))
 
-    if request.method == "POST":
+        available_donations = get_available_donations("Clothes")
 
-        item_name = request.form.get(
+        if request.method == "POST":
+
+            item_name = request.form.get(
             "item_name",
             ""
         ).strip()
@@ -1217,9 +1265,12 @@ def request_clothes():
         finally:
             close_db(cursor, db)
 
-    return render_template(
+        available_donations = get_available_donations("Clothes")
+
+        return render_template(
         "request.html",
-        request_type="Clothes"
+        request_type="Clothes",
+        available_donations=available_donations
     )
 
 
@@ -1234,6 +1285,9 @@ def request_accessories():
         )
 
         return redirect(url_for("login"))
+
+    # Load approved accessories for both GET and POST requests
+    available_donations = get_available_donations("Accessories")
 
     if request.method == "POST":
 
@@ -1299,9 +1353,12 @@ def request_accessories():
         finally:
             close_db(cursor, db)
 
+        available_donations = get_available_donations("Accessories")
+
     return render_template(
         "request.html",
-        request_type="Accessories"
+        request_type="Accessories",
+        available_donations=available_donations
     )
 
 
