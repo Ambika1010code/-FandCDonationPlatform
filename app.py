@@ -31,7 +31,7 @@ ALLOWED_IMAGE_EXTENSIONS = {
 
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
-ALLOWED_ROLES = {"donor", "receiver", "admin"}
+ALLOWED_ROLES = {"user", "admin"}
 
 # =========================================================
 # DONATION CATEGORIES
@@ -174,16 +174,14 @@ def logged_in():
 
 
 def role_required(role):
-    if not logged_in():
-        return False
 
-    if role in {"donor", "receiver"}:
-        return session.get("role") in {"donor", "receiver"}
+    if role in {"donor", "receiver", "user"}:
+        return session.get("role") == "user"
 
     return session.get("role") == role
 
-
 def parse_datetime(value):
+
     if not value:
         return None
 
@@ -194,18 +192,11 @@ def parse_datetime(value):
 
 
 def dashboard_for(role):
-    if role in {"donor", "receiver"}:
+    if role == "user":
         return "donor_dashboard"
-
     if role == "admin":
         return "admin_dashboard"
-
     return "index"
-
-# =========================================================
-# COMMON DATA
-# =========================================================
-
 @app.context_processor
 def common_data():
 
@@ -236,11 +227,11 @@ def common_data():
 
         stats["clothes"] = cursor.fetchone()["total"]
 
-        # Users
+                # Users
         cursor.execute(
             "SELECT COUNT(*) AS total "
             "FROM users "
-            "WHERE role IN ('donor','receiver')"
+            "WHERE role='user'"
         )
 
         stats["users"] = cursor.fetchone()["total"]
@@ -416,10 +407,6 @@ def login():
     return render_template("login.html")
 
 
-# =========================================================
-# REGISTER
-# =========================================================
-
 @app.route("/register", methods=["GET", "POST"])
 def register():
 
@@ -428,45 +415,22 @@ def register():
         name = request.form.get("name", "").strip()
         email = request.form.get("email", "").strip().lower()
         phone = request.form.get("phone", "").strip()
-        address = request.form.get("address", "").strip()
         password = request.form.get("password", "")
-        confirm_password = request.form.get(
-            "confirm_password",
-            ""
-        )
-        role = request.form.get("role", "")
+        role = request.form.get("role", "user").strip().lower()
 
-        if (
-            not name
-            or not email
-            or not password
-            or role not in {"donor", "receiver"}
-        ):
-
+        if not name or not email or not password:
             flash(
-                "Please fill the required fields and choose a valid role.",
+                "Name, email and password are required.",
                 "danger"
             )
+            return render_template("register.html")
 
-            return redirect(url_for("register"))
-
-        if len(password) < 6:
-
+        if role not in ALLOWED_ROLES:
             flash(
-                "Password must be at least 6 characters.",
+                "Invalid account role.",
                 "danger"
             )
-
-            return redirect(url_for("register"))
-
-        if password != confirm_password:
-
-            flash(
-                "Passwords do not match.",
-                "danger"
-            )
-
-            return redirect(url_for("register"))
+            return render_template("register.html")
 
         db = cursor = None
 
@@ -476,39 +440,59 @@ def register():
             cursor = db.cursor(dictionary=True)
 
             cursor.execute(
-                "SELECT id FROM users WHERE email=%s",
+                """
+                SELECT id
+                FROM users
+                WHERE email=%s
+                """,
                 (email,)
             )
 
-            if cursor.fetchone():
+            existing_user = cursor.fetchone()
+
+            if existing_user:
 
                 flash(
-                    "This email is already registered.",
+                    "An account with this email already exists.",
                     "warning"
                 )
 
-                return redirect(url_for("register"))
+                return render_template("register.html")
+
+            password_hash = generate_password_hash(password)
 
             cursor.execute(
                 """
                 INSERT INTO users
-                (name, email, password, role, phone, address)
-                VALUES (%s, %s, %s, %s, %s, %s)
+                (
+                    name,
+                    email,
+                    password,
+                    role,
+                    phone
+                )
+                VALUES
+                (
+                    %s,
+                    %s,
+                    %s,
+                    %s,
+                    %s
+                )
                 """,
                 (
                     name,
                     email,
-                    generate_password_hash(password),
-                    "donor",
-                    phone,
-                    address,
-                ),
+                    password_hash,
+                    role,
+                    phone
+                )
             )
 
             db.commit()
 
             flash(
-                "Registration successful. You can now log in.",
+                "Registration successful. You can now login.",
                 "success"
             )
 
@@ -516,8 +500,11 @@ def register():
 
         except mysql.connector.Error:
 
+            if db:
+                db.rollback()
+
             flash(
-                "Registration failed. Please check your database settings.",
+                "Could not create your account.",
                 "danger"
             )
 
@@ -1432,12 +1419,6 @@ def profile():
         "profile.html",
         user=user
     )
-
-
-# =========================================================
-# HISTORY
-# =========================================================
-
 @app.route("/history")
 def history():
 
@@ -1460,29 +1441,28 @@ def history():
         db = get_db_connection()
         cursor = db.cursor(dictionary=True)
 
-        if session["role"] == "donor":
+        if session["role"] == "user":
 
             cursor.execute(
-            """
-            SELECT *
-            FROM donations
-            WHERE user_id=%s
-            ORDER BY created_at DESC
-            """,
-            (session["user_id"],),
+                """
+                SELECT *
+                FROM donations
+                WHERE user_id=%s
+                ORDER BY created_at DESC
+                """,
+                (session["user_id"],),
             )
 
             donations = cursor.fetchall()
 
-
             cursor.execute(
-            """
-            SELECT *
-            FROM donation_requests
-            WHERE user_id=%s
-            ORDER BY created_at DESC
-            """,
-            (session["user_id"],),
+                """
+                SELECT *
+                FROM donation_requests
+                WHERE user_id=%s
+                ORDER BY created_at DESC
+                """,
+                (session["user_id"],),
             )
 
             requests_list = cursor.fetchall()
@@ -1728,8 +1708,25 @@ def admin_dashboard():
             ORDER BY donations.created_at DESC
             """
         )
-
         donations = cursor.fetchall()
+
+        # Prepare donation items and uploaded images
+        # for display in the admin dashboard.
+        for donation in donations:
+
+            try:
+                donation["image_list"] = json.loads(
+                    donation.get("image_paths") or "[]"
+                )
+            except (json.JSONDecodeError, TypeError):
+                donation["image_list"] = []
+
+            try:
+                donation["item_list"] = json.loads(
+                    donation.get("items_json") or "[]"
+                )
+            except (json.JSONDecodeError, TypeError):
+                donation["item_list"] = []
 
         cursor.execute(
             """
@@ -1743,6 +1740,29 @@ def admin_dashboard():
         )
 
         requests_list = cursor.fetchall()
+
+        # Get donations that have already been approved.
+        # These can later be sent to suitable requesters.
+        cursor.execute(
+            """
+            SELECT
+                donations.id,
+                donations.donation_type,
+                donations.item_name,
+                donations.quantity,
+                donations.size,
+                donations.condition,
+                donations.status,
+                users.name AS donor_name
+            FROM donations
+            JOIN users
+            ON donations.user_id=users.id
+            WHERE donations.status='Approved'
+            ORDER BY donations.created_at DESC
+            """
+        )
+
+        available_donations = cursor.fetchall()
 
         cursor.execute(
             """
@@ -1782,6 +1802,7 @@ def admin_dashboard():
         requests=requests_list,
         messages=messages,
         status_options=STATUS_OPTIONS,
+        available_donations=available_donations,
     )
 
 
@@ -1823,7 +1844,7 @@ def admin_reports():
 
         cursor.execute(
             "SELECT COUNT(*) AS total FROM users "
-            "WHERE role IN ('donor','receiver')"
+            "WHERE role='user'"
         )
         report["total_users"] = cursor.fetchone()["total"]
 
@@ -2067,6 +2088,219 @@ def admin_update_request_status(request_id):
 
         flash(
             "Could not update request status.",
+            "danger"
+        )
+
+    finally:
+        close_db(cursor, db)
+
+    return redirect(
+        url_for("admin_dashboard")
+    )
+    # =========================================================
+# ADMIN SEND DONATION TO REQUEST
+# =========================================================
+
+@app.route(
+    "/admin/send-donation/<int:request_id>",
+    methods=["POST"]
+)
+def admin_send_donation(request_id):
+
+    if not role_required("admin"):
+
+        flash(
+            "Admin access required.",
+            "warning"
+        )
+
+        return redirect(url_for("login"))
+
+    donation_id_text = request.form.get(
+        "donation_id",
+        ""
+    ).strip()
+
+    try:
+        donation_id = int(donation_id_text)
+
+    except ValueError:
+
+        flash(
+            "Please select a valid donation.",
+            "danger"
+        )
+
+        return redirect(
+            url_for("admin_dashboard")
+        )
+
+    db = cursor = None
+
+    try:
+
+        db = get_db_connection()
+        cursor = db.cursor(dictionary=True)
+
+        # -------------------------------------------------
+        # Find the request
+        # -------------------------------------------------
+
+        cursor.execute(
+            """
+            SELECT *
+            FROM donation_requests
+            WHERE id=%s
+            """,
+            (request_id,)
+        )
+
+        donation_request = cursor.fetchone()
+
+        if not donation_request:
+
+            flash(
+                "Request not found.",
+                "danger"
+            )
+
+            return redirect(
+                url_for("admin_dashboard")
+            )
+
+        # -------------------------------------------------
+        # Make sure request is not already completed
+        # -------------------------------------------------
+
+        if donation_request["status"] == "Completed":
+
+            flash(
+                "This request has already been completed.",
+                "warning"
+            )
+
+            return redirect(
+                url_for("admin_dashboard")
+            )
+
+        # -------------------------------------------------
+        # Find selected donation
+        # -------------------------------------------------
+
+        cursor.execute(
+            """
+            SELECT *
+            FROM donations
+            WHERE id=%s
+            """,
+            (donation_id,)
+        )
+
+        donation = cursor.fetchone()
+
+        if not donation:
+
+            flash(
+                "Donation not found.",
+                "danger"
+            )
+
+            return redirect(
+                url_for("admin_dashboard")
+            )
+
+        # -------------------------------------------------
+        # Donation must be approved
+        # -------------------------------------------------
+
+        if donation["status"] != "Approved":
+
+            flash(
+                "Only approved donations can be sent.",
+                "danger"
+            )
+
+            return redirect(
+                url_for("admin_dashboard")
+            )
+
+        # -------------------------------------------------
+        # Donation type must match request type
+        # -------------------------------------------------
+
+        if donation["donation_type"] != donation_request["request_type"]:
+
+            flash(
+                "Donation type does not match the request.",
+                "danger"
+            )
+
+            return redirect(
+                url_for("admin_dashboard")
+            )
+
+        # -------------------------------------------------
+        # Check quantity
+        # -------------------------------------------------
+
+        if donation["quantity"] < donation_request["quantity"]:
+
+            flash(
+                "The selected donation does not have enough quantity.",
+                "danger"
+            )
+
+            return redirect(
+                url_for("admin_dashboard")
+            )
+
+        # -------------------------------------------------
+        # Save the match
+        # -------------------------------------------------
+
+        cursor.execute(
+            """
+            UPDATE donation_requests
+            SET
+                matched_donation_id=%s,
+                fulfilled_quantity=%s,
+                status='Completed'
+            WHERE id=%s
+            """,
+            (
+                donation_id,
+                donation_request["quantity"],
+                request_id
+            )
+        )
+
+        # -------------------------------------------------
+        # Mark donation as completed
+        # -------------------------------------------------
+
+        cursor.execute(
+            """
+            UPDATE donations
+            SET status='Completed'
+            WHERE id=%s
+            """,
+            (donation_id,)
+        )
+
+        db.commit()
+
+        flash(
+            "Donation has been sent to the requester successfully.",
+            "success"
+        )
+
+    except mysql.connector.Error:
+
+        if db:
+            db.rollback()
+
+        flash(
+            "Could not send the donation.",
             "danger"
         )
 
