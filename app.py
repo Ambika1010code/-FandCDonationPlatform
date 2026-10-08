@@ -1133,20 +1133,20 @@ def request_food():
 @app.route("/request/clothes", methods=["GET", "POST"])
 def request_clothes():
 
-        if not logged_in():
+    if not logged_in():
 
-         flash(
+        flash(
             "Please log in to request help.",
             "warning"
         )
 
         return redirect(url_for("login"))
 
-        available_donations = get_available_donations("Clothes")
+    available_donations = get_available_donations("Clothes")
 
-        if request.method == "POST":
+    if request.method == "POST":
 
-            item_name = request.form.get(
+        item_name = request.form.get(
             "item_name",
             ""
         ).strip()
@@ -1265,9 +1265,7 @@ def request_clothes():
         finally:
             close_db(cursor, db)
 
-        available_donations = get_available_donations("Clothes")
-
-        return render_template(
+    return render_template(
         "request.html",
         request_type="Clothes",
         available_donations=available_donations
