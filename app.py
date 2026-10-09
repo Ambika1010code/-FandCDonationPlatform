@@ -33,9 +33,6 @@ os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
 ALLOWED_ROLES = {"user", "admin"}
 
-# =========================================================
-# DONATION CATEGORIES
-# =========================================================
 
 DONATION_CATEGORIES = {
     "Food": [
